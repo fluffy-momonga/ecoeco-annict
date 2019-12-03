@@ -1,0 +1,44 @@
+body {
+	font-size: small;
+}
+h6 {
+	display: inline-block;
+}
+.template {
+	display: none;
+}
+.group.panel {
+	border-color: #449d44;
+}
+.group-heading.panel-heading {
+	padding: 5px 15px;
+	color: #fff;
+	background-color: #449d44;
+	border-color: #255625;
+}
+.works.panel.panel-info {
+	margin-bottom: 5px;
+}
+.works.panel {
+	margin-bottom: 10px;
+}
+.work-heading.panel-heading {
+	padding: 5px 5px;
+}
+.work-heading > .btn-group {
+	display: inline;
+}
+.work-heading > .btn-group .work-review {
+	margin-left: 5px;
+}
+.episode-body.panel-body {
+	padding: 5px 15px;
+}
+.work-link,
+.episode-link {
+	margin-left: 5px;
+}
+body a,
+body a:focus, body a:hover {
+	color: #3c763d;
+}
