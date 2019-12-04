@@ -357,13 +357,13 @@ function saveSearchWorksJson() {
 }
 
 function postQuery(success, query, variables) {
-  var token = localStorage.getItem('token');
+  var token = sessionStorage.getItem('token');
   if (!token || token == 'null') {
     token = prompt('アクセストークン');
     if (!token) {
       return;
     }
-    localStorage.setItem('token', token);
+    sessionStorage .setItem('token', token);
   }
 
   var query = {
