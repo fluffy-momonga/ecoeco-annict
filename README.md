@@ -8,4 +8,4 @@ https://developers.annict.jp/graphql-api/personal-access-token/
 EcoEco Annict  
 https://fluffy-momonga.github.io/ecoeco-annict/index.min.html
 
-<img src="https://github.com/fluffy-momonga/ecoeco-annict/blob/images/image.png" width="50%">
+<img src="https://github.com/fluffy-momonga/ecoeco-annict/blob/images/image.png" width="75%">
