@@ -220,7 +220,6 @@ function setupEvent(template) {
   setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), nextEpisodeQuery, 'nextEpisode', true);
 
   $('#update').click(function() {
-    clearWatchingWorks()
     updateWatchingWorksJson(function() {
       renderWatchingWorks();
     });
@@ -228,7 +227,7 @@ function setupEvent(template) {
 
   $('#clear').click(function() {
     clearWatchingWorks();
-    localStorage.clear();
+    clearStorage();
     loadWatchingWorksJson();
   });
 }

@@ -356,38 +356,70 @@ function saveSearchWorksJson() {
   }, 0);
 }
 
-function postQuery(success, query, variables) {
-  var token = sessionStorage.getItem('token');
-  if (!token || token == 'null') {
-    token = prompt('アクセストークン');
-    if (!token) {
-      return;
-    }
-    sessionStorage .setItem('token', token);
-  }
+function clearStorage() {
+  localStorage.clear();
+  sessionStorage.clear();
+}
 
-  var query = {
-    query: query.replace(spaceReg, ' ')
+function postQuery(success, query, variables) {
+  var ajax = function(token, callback) {
+    var data = {
+      query: query.replace(spaceReg, ' ')
+    };
+
+    if (variables) {
+      data.variables = variables;
+    }
+
+    $.ajax({
+      url: 'https://api.annict.com/graphql',
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      headers: {
+        Authorization: 'bearer ' + token
+      },
+      data: JSON.stringify(data),
+      success: callback,
+      error: function(xhr, textStatus, errorThrown) {
+        alert(textStatus + ': ' + errorThrown + ' ' + xhr.status);
+      }
+    });
   };
 
-  if (variables) {
-    query.variables = variables;
+  var token = sessionStorage.getItem('token');
+  if (!token) {
+    token = localStorage.getItem('token');
   }
 
-  $.ajax({
-    url: 'https://api.annict.com/graphql',
-    type: 'POST',
-    contentType: 'application/json',
-    dataType: 'json',
-    headers: {
-      Authorization: 'bearer ' + token
-    },
-    data: JSON.stringify(query),
-    success: success,
-    error: function(xhr, textStatus, errorThrown) {
-      alert('error: ' + textStatus + ' ' + errorThrown + ' ' + xhr.status);
+  if (token) {
+    ajax(token, success);
+    return;
+  }
+
+  $('#token-modal-ok').unbind('click').bind('click', function() {
+    var token = $('#token').val();
+    if (token) {
+      var storage = $('[name="storage"]:checked').val();
+      ajax(token, function(json) {
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
+
+        if (storage == 'session') {
+          sessionStorage.setItem('token', token);
+        } else if (storage == 'local') {
+          localStorage.setItem('token', token);
+        }
+
+        if (success) {
+          success(json);
+        }
+      });
     }
+    $('#token-modal').modal('hide');
   });
+
+  $('#token-modal').modal();
 }
 
 loadWatchingWorksJson();
