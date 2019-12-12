@@ -24,9 +24,16 @@
         <form id="searchForm">
           <div class="input-group input-group-sm">
             <span class="input-group-btn">
-              <button type="submit" id="search" class="btn btn-default">&#x1F50D;</button>
+              <button type="button" id="search" class="btn btn-default">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+              </button>
             </span>
             <input type="text" id="title" class="form-control" placeholder="タイトル">
+            <span class="input-group-btn">
+              <button type="button" id="remove" class="btn btn-default">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+            </span>
           </div>
         </form>
         <form id="worksForm" class="form-inline">
@@ -35,9 +42,7 @@
         <nav>
           <ul class="pager">
             <li id="pager-prev"><a href="#">前へ</a></li>
-            <li id="pager-prev-disabled" class="disabled" style="display:none;"><span>前へ</span></li>
             <li id="pager-next"><a href="#">次へ</a></li>
-            <li id="pager-next-disabled" class="disabled" style="display:none;"><span>次へ</span></li>
           </ul>
         </nav>
       </div>
@@ -62,11 +67,19 @@
               </h6>
             </div>
             <div class="episode-body panel-body btn-group btn-group-xs" data-id="" data-annict-id="">
-              <button type="button" class="episode-skip-prev btn btn-default">&#x23EA;</button>
-              <button type="button" class="episode-prev btn btn-default">&#x25C0;</button>
+              <button type="button" class="episode-skip-prev btn btn-default">
+                <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="episode-prev btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              </button>
               <button type="button" class="episode-record btn btn-default">記録</button>
-              <button type="button" class="episode-next btn btn-default">&#x25B6;</button>
-              <button type="button" class="episode-skip-next btn btn-default">&#x23E9;</button>
+              <button type="button" class="episode-next btn btn-default">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="episode-skip-next btn btn-default">
+                <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+              </button>
               <a class="episode-link" target="_blank" href="">
                 <span class="episode-number"></span>
                 <span class="episode-title"></span>

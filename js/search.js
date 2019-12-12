@@ -20,21 +20,8 @@ function renderSearchWorks() {
     works.append(workHeading);
   });
 
-  if (searchWorksJson.data.searchWorks.pageInfo.hasPreviousPage) {
-    $('#pager-prev').show();
-    $('#pager-prev-disabled').hide();
-  } else {
-    $('#pager-prev').hide();
-    $('#pager-prev-disabled').show();
-  }
-
-  if (searchWorksJson.data.searchWorks.pageInfo.hasNextPage) {
-    $('#pager-next').show();
-    $('#pager-next-disabled').hide();
-  } else {
-    $('#pager-next').hide();
-    $('#pager-next-disabled').show();
-  }
+  $('#pager-prev').toggle(searchWorksJson.data.searchWorks.pageInfo.hasPreviousPage);
+  $('#pager-next').toggle(searchWorksJson.data.searchWorks.pageInfo.hasNextPage);
 }
 
 function searchWorks(before, after) {
@@ -63,6 +50,17 @@ $(function() {
     return false;
   });
 
+  $('#search').click(function() {
+    $(this).blur();
+    $('#searchForm').submit();
+  });
+
+  $('#remove').click(function() {
+    $(this).blur();
+    clearSearchWorksJson();
+    renderSearchWorks();
+  });
+
   $('#works-template .work-status').change(function() {
     var workStatus = $(this);
     var status = workStatus.val();
@@ -82,11 +80,13 @@ $(function() {
   });
 
   $('#pager-prev a').click(function() {
+    $(this).blur();
     searchWorks(searchWorksJson.data.searchWorks.pageInfo.startCursor, null);
     return false;
   });
 
   $('#pager-next a').click(function() {
+    $(this).blur();
     searchWorks(null, searchWorksJson.data.searchWorks.pageInfo.endCursor);
     return false;
   });

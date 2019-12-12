@@ -340,7 +340,10 @@ function loadSearchWorksJson() {
     data: {
       searchWorks: {
         nodes: [],
-        pageInfo: {}
+        pageInfo: {
+          hasPreviousPage: false,
+          hasNextPage: false
+        }
       }
     },
     title: '',
@@ -354,6 +357,12 @@ function saveSearchWorksJson() {
   setTimeout(function() {
     localStorage.setItem('searchWorks', JSON.stringify(searchWorksJson));
   }, 0);
+}
+
+function clearSearchWorksJson() {
+  localStorage.removeItem('searchWorks');
+  loadSearchWorksJson();
+  saveSearchWorksJson();
 }
 
 function clearStorage() {
