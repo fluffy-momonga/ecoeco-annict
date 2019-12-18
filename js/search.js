@@ -28,7 +28,8 @@ function searchWorks(before, after) {
   var title = $('#title').val();
   var variables = getSearchWorksVariables(title, before, after);
 
-  if (variables.titles.length == 0) {
+  if (variables.titles.length == 0 || !variables.titles[0]) {
+    alertMessage('タイトルを入力してください。', 'danger');
     return;
   }
 
@@ -38,6 +39,10 @@ function searchWorks(before, after) {
       searchWorksJson.title = title;
       saveSearchWorksJson();
       renderSearchWorks();
+
+      if (json.data.searchWorks.nodes.length == 0) {
+        alertMessage('対象の作品が見つかりませんでした。', 'warning');
+      }
     },
     searchWorksQuery,
     variables
@@ -73,6 +78,7 @@ $(function() {
         if (render) {
           renderWatchingWorks();
         }
+        alertMessage('変更完了', 'info');
       },
       updateStatusQuery,
       getStateVariables(id, status)
@@ -82,13 +88,11 @@ $(function() {
   $('#pager-prev a').click(function() {
     $(this).blur();
     searchWorks(searchWorksJson.data.searchWorks.pageInfo.startCursor, null);
-    return false;
   });
 
   $('#pager-next a').click(function() {
     $(this).blur();
     searchWorks(null, searchWorksJson.data.searchWorks.pageInfo.endCursor);
-    return false;
   });
 
   renderSearchWorks();

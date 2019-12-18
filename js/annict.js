@@ -122,8 +122,8 @@ var prevEpisodeQuery
 ;
 
 var createRecordQuery
-  =  'mutation($id: ID!) { '
-  +    'createRecord(input: {episodeId: $id}) { '
+  =  'mutation($id: ID!, $rating: RatingState, $comment: String) { '
+  +    'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment}) { '
   +      'record { '
   +        'episode { '
   +           episodeFields
@@ -134,8 +134,8 @@ var createRecordQuery
 ;
 
 var createReviewQuery
-  =  'mutation($id: ID!) { '
-  +    'createReview(input: {workId: $id, body: ""}) { '
+  =  'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState) { '
+  +    'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character}) { '
   +      'review { '
   +        'work { '
   +          'title '
@@ -221,6 +221,46 @@ function getSearchWorksVariables(titles, before, after) {
     variables.last = elements;
   } else {
     variables.first = elements;
+  }
+
+  return variables;
+}
+
+function getEpisodeRecordVariables(id, rating, comment) {
+  var variables = {
+    id: id
+  };
+
+  if (rating) {
+    variables.rating = rating;
+  }
+  if (comment) {
+    variables.comment = comment;
+  }
+
+  return variables;
+}
+
+function getWorkReviewVariables(id, body, overall, animation, music, story, character) {
+  var variables = {
+    id: id,
+    body: body
+  };
+
+  if (overall) {
+    variables.overall = overall;
+  }
+  if (animation) {
+    variables.animation = animation;
+  }
+  if (music) {
+    variables.music = music;
+  }
+  if (story) {
+    variables.story = story;
+  }
+  if (character) {
+    variables.character = character;
   }
 
   return variables;
@@ -370,6 +410,21 @@ function clearStorage() {
   sessionStorage.clear();
 }
 
+function alertMessage(message, type, delay) {
+  var alert = $('#alert');
+  var alertBg = alert.find('#alert-bg');
+  var oldBg = alertBg.data('bg');
+  var newBg = 'bg-' + type;
+  alertBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
+  alert.find('#alert-message').text(message);
+
+  alert.show('fast', function() {
+    setTimeout(function() {
+      alert.click();
+    }, delay ? delay : 2500);
+  });
+}
+
 function postQuery(success, query, variables) {
   var ajax = function(token, callback) {
     var data = {
@@ -390,8 +445,20 @@ function postQuery(success, query, variables) {
       },
       data: JSON.stringify(data),
       success: callback,
-      error: function(xhr, textStatus, errorThrown) {
-        alert(textStatus + ': ' + errorThrown + ' ' + xhr.status);
+      error: function(xhr) {
+        var message = '';
+        if (xhr.responseText) {
+            message = ': ';
+            try {
+              var json = JSON.parse(xhr.responseText);
+              if (json.message) {
+                message += json.message;
+              }
+            } catch(e) {
+              message += xhr.responseText;
+            }
+        }
+        alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
       }
     });
   };
@@ -430,5 +497,11 @@ function postQuery(success, query, variables) {
 
   $('#token-modal').modal();
 }
+
+$(function() {
+  $('#alert').click(function() {
+    $(this).hide('fast');
+  });
+});
 
 loadWatchingWorksJson();

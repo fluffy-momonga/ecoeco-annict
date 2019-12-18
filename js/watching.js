@@ -102,25 +102,75 @@ function updateEpisode(episode, workContents) {
   }
 }
 
-function setupEpisodeRecordEvent(target) {
+function setupWorkReviewEvent(target) {
+  var id;
+
   target.click(function() {
-    var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
-    var number = workContents.find('.episode-number').text();
-    var title = workContents.find('.episode-title').text();
+    var workHeading = $(this).closest('.work-heading');
+    var workTitle = workHeading.find('.work-link').text();
+    id = workHeading.data('id');
 
-    if (!confirm(number + "\n" + title + "\n\n記録？")) {
-      return;
-    }
+    $('#review-work-title').text(workTitle);
+    $('[name^="review-rating-"][value=""]').click();
+    $('#review-body').val('');
+    $('#review-modal').modal();
+  });
 
-    var id = workContents.filter('.episode-body').data('id');
+  $('#review-modal-ok').click(function() {
+    var overall = $('[name="review-rating-overall"]:checked').val();
+    var animation = $('[name="review-rating-animation"]:checked').val();
+    var music = $('[name="review-rating-music"]:checked').val();
+    var story = $('[name="review-rating-story"]:checked').val();
+    var character = $('[name="review-rating-character"]:checked').val();
+    var body = $('#review-body').val();
+
+    $('#review-modal').modal('hide')
+
+    postQuery(
+      function(json) {
+        /* json.data.createReview.review.work.title */
+        alertMessage('記録完了', 'info');
+      },
+      createReviewQuery,
+      getWorkReviewVariables(id, body, overall, animation, music, story, character)
+    );
+  });
+}
+
+function setupEpisodeRecordEvent(target) {
+  var workContents;
+  var id;
+
+  target.click(function() {
+    workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
+    id = workContents.filter('.episode-body').data('id');
+
+    var workTitle = workContents.find('.work-link').text();
+    var episodeNumber = workContents.find('.episode-number').text();
+    var episodeTitle = workContents.find('.episode-title').text();
+
+    $('#record-work-title').text(workTitle);
+    $('#record-episode-number').text(episodeNumber);
+    $('#record-episode-title').text(episodeTitle);
+    $('[name="record-rating"][value=""]').click();
+    $('#record-comment').val('');
+    $('#record-modal').modal();
+  });
+
+  $('#record-modal-ok').click(function() {
+    var rating = $('[name="record-rating"]:checked').val();
+    var comment = $('#record-comment').val();
+
+    $('#record-modal').modal('hide')
 
     postQuery(
       function(json) {
         var episode = json.data.createRecord.record.episode;
         updateEpisode(episode, workContents);
+        alertMessage('記録完了', 'info');
       },
       createRecordQuery,
-      getIdVariables(id)
+      getEpisodeRecordVariables(id, rating, comment)
     );
   });
 }
@@ -182,6 +232,8 @@ function setupUpdateStatusEvent(target, state, message) {
           groupBody.prev('.group-heading').remove();
           groupBody.remove();
         }
+
+        alertMessage('変更完了', 'info');
       },
       updateStatusQuery,
       variables
@@ -194,24 +246,7 @@ function setupEvent(template) {
   setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', "\n\n見た？");
   setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', "\n\n視聴中止？");
 
-  template.find('.work-review').click(function() {
-    var workHeading = $(this).closest('.work-heading');
-    var title = workHeading.find('.work-link').text();
-
-    if (!confirm(title + "\n\n記録？")) {
-      return;
-    }
-
-    var id = workHeading.data('id');
-    postQuery(
-      function(json) {
-        alert(json.data.createReview.review.work.title);
-      },
-      createReviewQuery,
-      getIdVariables(id)
-    );
-  });
-
+  setupWorkReviewEvent(template.find('.work-review'));
   setupEpisodeRecordEvent(template.find('.episode-record'));
 
   setupEpisodeNextPrevEvent(template.find('.episode-skip-prev'), prevEpisodeQuery, 'prevEpisode', true);
@@ -222,6 +257,7 @@ function setupEvent(template) {
   $('#update').click(function() {
     updateWatchingWorksJson(function() {
       renderWatchingWorks();
+      alertMessage('更新完了', 'info');
     });
   });
 
@@ -229,6 +265,7 @@ function setupEvent(template) {
     clearWatchingWorks();
     clearStorage();
     loadWatchingWorksJson();
+    alertMessage('クリア完了', 'info');
   });
 }
 

@@ -7,6 +7,9 @@ h6 {
 .template {
   display: none;
 }
+.btn-default {
+  color: #3c763d;
+}
 .group.panel {
   border-color: #449d44;
 }
@@ -41,4 +44,7 @@ h6 {
 body a,
 body a:focus, body a:hover {
   color: #3c763d;
+}
+#result-works .work-heading:nth-child(even) {
+    background-color: #fff;
 }
