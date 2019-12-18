@@ -352,6 +352,13 @@ function saveWatchingWorksJson() {
 }
 
 function addWatchingWorksJson(work) {
+  var works = watchingWorksJson.data.viewer.works.nodes;
+  for (var i = 0; i < works.length; i++) {
+    if (works[i].annictId == work.annictId) {
+      return false;
+    }
+  }
+
   watchingWorksJson.data.viewer.works.nodes.push(work);
   saveWatchingWorksJson();
   return true;

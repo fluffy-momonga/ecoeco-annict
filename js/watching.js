@@ -206,14 +206,20 @@ function setupEpisodeNextPrevEvent(target, query, episodeKey, skip) {
   });
 }
 
-function setupUpdateStatusEvent(target, state, message) {
-  target.click(function() {
-    var workHeading = $(this).closest('.work-heading');
-    var title = workHeading.find('.work-link').text();
+function setupUpdateStatusEvent(target, state, prefix) {
+  var workHeading;
+  var idPrefix = '#' + prefix;
 
-    if (!confirm(title + message)) {
-      return;
-    }
+  target.click(function() {
+    workHeading = $(this).closest('.work-heading');
+    var workTitle = workHeading.find('.work-link').text();
+
+    $(idPrefix + '-work-title').text(workTitle);
+    $(idPrefix + '-modal').modal();
+  });
+
+  $(idPrefix + '-modal-ok').click(function() {
+    $(idPrefix + '-modal').modal('hide')
 
     var id = workHeading.data('id');
     var variables = getStateVariables(id, state);
@@ -243,8 +249,8 @@ function setupUpdateStatusEvent(target, state, message) {
 
 function setupEvent(template) {
 
-  setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', "\n\n見た？");
-  setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', "\n\n視聴中止？");
+  setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', 'watched');
+  setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', 'stop');
 
   setupWorkReviewEvent(template.find('.work-review'));
   setupEpisodeRecordEvent(template.find('.episode-record'));
