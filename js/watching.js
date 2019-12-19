@@ -18,7 +18,7 @@ function getEpisodeBody(episode, work) {
     return episodeBody.empty();
   }
 
-  episodeBody.removeData().attr('data-id', episode.id).attr('data-annict-id', episode.annictId)
+  episodeBody.removeData().attr('data-id', episode.id).attr('data-annict-id', episode.annictId);
 
   var href = 'https://annict.jp/works/' + work.annictId + '/episodes/' + episode.annictId;
   var record = episodeBody.find('.episode-record');
@@ -102,6 +102,17 @@ function updateEpisode(episode, workContents) {
   }
 }
 
+function loadChecked(target, key) {
+  var value = localStorage.getItem(key);
+  target.prop('checked', value == 'true');
+}
+
+function saveChecked(target, key) {
+  var value = target.prop('checked');
+  localStorage.setItem(key, value);
+  return value;
+}
+
 function setupWorkReviewEvent(target) {
   var id;
 
@@ -113,6 +124,9 @@ function setupWorkReviewEvent(target) {
     $('#review-work-title').text(workTitle);
     $('[name^="review-rating-"][value=""]').click();
     $('#review-body').val('');
+    loadChecked($('#review-twitter'), 'twitter');
+    loadChecked($('#review-facebook'), 'facebook');
+
     $('#review-modal').modal();
   });
 
@@ -123,8 +137,10 @@ function setupWorkReviewEvent(target) {
     var story = $('[name="review-rating-story"]:checked').val();
     var character = $('[name="review-rating-character"]:checked').val();
     var body = $('#review-body').val();
+    var twitter = saveChecked($('#review-twitter'), 'twitter');
+    var facebook = saveChecked($('#review-facebook'), 'facebook');
 
-    $('#review-modal').modal('hide')
+    $('#review-modal').modal('hide');
 
     postQuery(
       function(json) {
@@ -132,7 +148,7 @@ function setupWorkReviewEvent(target) {
         alertMessage('記録完了', 'info');
       },
       createReviewQuery,
-      getWorkReviewVariables(id, body, overall, animation, music, story, character)
+      getWorkReviewVariables(id, body, overall, animation, music, story, character, twitter, facebook)
     );
   });
 }
@@ -154,14 +170,19 @@ function setupEpisodeRecordEvent(target) {
     $('#record-episode-title').text(episodeTitle);
     $('[name="record-rating"][value=""]').click();
     $('#record-comment').val('');
+    loadChecked($('#record-twitter'), 'twitter');
+    loadChecked($('#record-facebook'), 'facebook');
+
     $('#record-modal').modal();
   });
 
   $('#record-modal-ok').click(function() {
     var rating = $('[name="record-rating"]:checked').val();
     var comment = $('#record-comment').val();
+    var twitter = saveChecked($('#record-twitter'), 'twitter');
+    var facebook = saveChecked($('#record-facebook'), 'facebook');
 
-    $('#record-modal').modal('hide')
+    $('#record-modal').modal('hide');
 
     postQuery(
       function(json) {
@@ -170,7 +191,7 @@ function setupEpisodeRecordEvent(target) {
         alertMessage('記録完了', 'info');
       },
       createRecordQuery,
-      getEpisodeRecordVariables(id, rating, comment)
+      getEpisodeRecordVariables(id, rating, comment, twitter, facebook)
     );
   });
 }
@@ -219,7 +240,7 @@ function setupUpdateStatusEvent(target, state, prefix) {
   });
 
   $(idPrefix + '-modal-ok').click(function() {
-    $(idPrefix + '-modal').modal('hide')
+    $(idPrefix + '-modal').modal('hide');
 
     var id = workHeading.data('id');
     var variables = getStateVariables(id, state);

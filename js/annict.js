@@ -40,19 +40,6 @@ var watchingWorksQuery
   +  '}'
 ;
 
-var episodesQuery
-  =  'query($ids: [Int!]!) { '
-  +    'searchEpisodes(annictIds: $ids) @include(if: $skip) { '
-  +      'nodes { '
-  +         episodeFields
-  +        'work { '
-  +          'annictId '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '}'
-;
-
 var nextEpisodeQuery
   =  'query($id: Int!, $skip: Boolean!) { '
   +    'searchEpisodes(annictIds: [$id]) { '
@@ -122,8 +109,8 @@ var prevEpisodeQuery
 ;
 
 var createRecordQuery
-  =  'mutation($id: ID!, $rating: RatingState, $comment: String) { '
-  +    'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment}) { '
+  =  'mutation($id: ID!, $rating: RatingState, $comment: String, $twitter: Boolean, $facebook: Boolean) { '
+  +    'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment, shareTwitter: $twitter, shareFacebook: $facebook}) { '
   +      'record { '
   +        'episode { '
   +           episodeFields
@@ -134,8 +121,8 @@ var createRecordQuery
 ;
 
 var createReviewQuery
-  =  'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState) { '
-  +    'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character}) { '
+  =  'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState, $twitter: Boolean, $facebook: Boolean) { '
+  +    'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character, shareTwitter: $twitter, shareFacebook: $facebook}) { '
   +      'review { '
   +        'work { '
   +          'title '
@@ -226,7 +213,7 @@ function getSearchWorksVariables(titles, before, after) {
   return variables;
 }
 
-function getEpisodeRecordVariables(id, rating, comment) {
+function getEpisodeRecordVariables(id, rating, comment, twitter, facebook) {
   var variables = {
     id: id
   };
@@ -237,11 +224,17 @@ function getEpisodeRecordVariables(id, rating, comment) {
   if (comment) {
     variables.comment = comment;
   }
+  if (twitter) {
+    variables.twitter = twitter;
+  }
+  if (facebook) {
+    variables.facebook = facebook;
+  }
 
   return variables;
 }
 
-function getWorkReviewVariables(id, body, overall, animation, music, story, character) {
+function getWorkReviewVariables(id, body, overall, animation, music, story, character, twitter, facebook) {
   var variables = {
     id: id,
     body: body
@@ -261,6 +254,12 @@ function getWorkReviewVariables(id, body, overall, animation, music, story, char
   }
   if (character) {
     variables.character = character;
+  }
+  if (twitter) {
+    variables.twitter = twitter;
+  }
+  if (facebook) {
+    variables.facebook = facebook;
   }
 
   return variables;
@@ -498,6 +497,8 @@ function postQuery(success, query, variables) {
           success(json);
         }
       });
+    } else {
+      alertMessage('アクセストークンを入力してください。', 'danger');
     }
     $('#token-modal').modal('hide');
   });
