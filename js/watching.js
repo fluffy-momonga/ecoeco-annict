@@ -54,7 +54,8 @@ function renderWatchingWorks() {
 
   watchingWorksJson.data.viewer.works.nodes.forEach(function(work) {
     for (var i = 0; i < groupList.length; i++) {
-      if (groupList[i].reg.test(work.titleKana)) {
+      var reg = groupList[i].reg;
+      if (reg.test(work.titleKana) || reg.test(work.title)) {
         groupList[i].works.push(work);
         break;
       }

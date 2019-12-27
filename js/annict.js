@@ -408,12 +408,12 @@ function saveWatchingWorksJson() {
   };
 
   watchingWorksJson.data.viewer.works.nodes.sort(function(a, b) {
-    var titleKana1 = a.titleKana.replace(reg, rep);
-    var titleKana2 = b.titleKana.replace(reg, rep);
+    var title1 = a.titleKana ? a.titleKana.replace(reg, rep) : a.title.replace(reg, rep);
+    var title2 = b.titleKana ? b.titleKana.replace(reg, rep) : b.title.replace(reg, rep);
 
-    if (titleKana1 < titleKana2) {
+    if (title1 < title2) {
       return -1;
-    } else if (titleKana1 > titleKana2) {
+    } else if (title1 > title2) {
       return 1;
     }
     return 0;
