@@ -26,14 +26,14 @@ function renderSearchWorks() {
 
 function searchWorks(before, after) {
   var title = $('#title').val();
-  var variables = getSearchWorksVariables(title, before, after);
+  var titles = title.split(spaceReg);
 
-  if (variables.titles.length == 0 || !variables.titles[0]) {
+  if (titles.length == 0 || !titles[0]) {
     alertMessage('タイトルを入力してください。', 'danger');
     return;
   }
 
-  postQuery(
+  api.searchWorks(
     function(json) {
       searchWorksJson = json;
       searchWorksJson.title = title;
@@ -44,8 +44,7 @@ function searchWorks(before, after) {
         alertMessage('対象の作品が見つかりませんでした。', 'warning');
       }
     },
-    searchWorksQuery,
-    variables
+    titles, before, after
   );
 }
 
@@ -71,7 +70,7 @@ $(function() {
     var status = workStatus.val();
     var id = workStatus.closest('.work-heading').data('id');
 
-    postQuery(
+    api.updateStatus(
       function(json) {
         var work = json.data.updateStatus.work;
         var render = (status == 'WATCHING') ? addWatchingWorksJson(work) : removeWatchingWorksJson(work.annictId);
@@ -80,8 +79,7 @@ $(function() {
         }
         alertMessage('変更完了', 'info');
       },
-      updateStatusQuery,
-      getStateVariables(id, status)
+      id, status
     );
   });
 
