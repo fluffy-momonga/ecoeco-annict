@@ -400,16 +400,20 @@ function loadWatchingWorksJson() {
   };
 }
 
+var altReg = /^ゔ[ぁぃぅぇぉ]?|^ヴ[ァィゥェォ]?/;
+var altDic = {
+  'ゔぁ': 'ば', 'ゔぃ': 'び', 'ゔ': 'ぶ', 'ゔぅ': 'ぶ', 'ゔぇ': 'べ', 'ゔぉ': 'ぼ',
+  'ヴァ': 'バ', 'ヴィ': 'ビ', 'ヴ': 'ブ', 'ヴゥ': 'ブ', 'ヴェ': 'ベ', 'ヴォ': 'ボ'
+};
+var altRep = function(match) {
+  return altDic[match];
+};
+
 function saveWatchingWorksJson() {
-  var reg = /^ゔ[ぁぃぅぇぉ]?/;
-  var dic = {'ゔぁ': 'ば', 'ゔぃ': 'び', 'ゔ': 'ぶ', 'ゔぅ': 'ぶ', 'ゔぇ': 'べ', 'ゔぉ': 'ぼ'};
-  var rep = function(match) {
-    return dic[match];
-  };
 
   watchingWorksJson.data.viewer.works.nodes.sort(function(a, b) {
-    var title1 = a.titleKana ? a.titleKana.replace(reg, rep) : a.title.replace(reg, rep);
-    var title2 = b.titleKana ? b.titleKana.replace(reg, rep) : b.title.replace(reg, rep);
+    var title1 = a.titleKana ? a.titleKana.replace(altReg, altRep) : a.title.replace(altReg, altRep);
+    var title2 = b.titleKana ? b.titleKana.replace(altReg, altRep) : b.title.replace(altReg, altRep);
 
     if (title1 < title2) {
       return -1;
