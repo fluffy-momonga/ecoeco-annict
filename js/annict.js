@@ -1,6 +1,6 @@
 var version = 1;
 
-var api = new (function() {
+var api = new function() {
 
   var workFields
     = 'id '
@@ -346,7 +346,7 @@ var api = new (function() {
     postQuery(success, searchWorksQuery, variables);
   };
 
-})();
+};
 
 var watchingWorksJson;
 var searchWorksJson;
