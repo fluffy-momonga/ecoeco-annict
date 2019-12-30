@@ -143,13 +143,12 @@ function setupWorkReviewEvent(target) {
 
     $('#review-modal').modal('hide');
 
-    postQuery(
+    api.createReview(
       function(json) {
         /* json.data.createReview.review.work.title */
         alertMessage('記録完了', 'info');
       },
-      createReviewQuery,
-      getWorkReviewVariables(id, body, overall, animation, music, story, character, twitter, facebook)
+      id, body, overall, animation, music, story, character, twitter, facebook
     );
   });
 }
@@ -185,14 +184,13 @@ function setupEpisodeRecordEvent(target) {
 
     $('#record-modal').modal('hide');
 
-    postQuery(
+    api.createRecord(
       function(json) {
         var episode = json.data.createRecord.record.episode;
         updateEpisode(episode, workContents);
         alertMessage('記録完了', 'info');
       },
-      createRecordQuery,
-      getEpisodeRecordVariables(id, rating, comment, twitter, facebook)
+      id, rating, comment, twitter, facebook
     );
   });
 }
@@ -209,21 +207,17 @@ function searchEpisode(rootEpisode, episodeKey) {
   }
 }
 
-function setupEpisodeNextPrevEvent(target, query, episodeKey, skip) {
+function setupEpisodeNextPrevEvent(target, method, episodeKey, skip) {
   target.click(function() {
     var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
     var annictId = workContents.filter('.episode-body').data('annict-id');
 
-    var variables = getIdVariables(annictId);
-    variables.skip = skip;
-
-    postQuery(
+    method(
       function(json) {
         var episode = searchEpisode(json.data.searchEpisodes.nodes[0], episodeKey);
         updateEpisode(episode, workContents);
       },
-      query,
-      variables
+      annictId, skip
     );
   });
 }
@@ -244,9 +238,8 @@ function setupUpdateStatusEvent(target, state, prefix) {
     $(idPrefix + '-modal').modal('hide');
 
     var id = workHeading.data('id');
-    var variables = getStateVariables(id, state);
 
-    postQuery(
+    api.updateStatus(
       function(json) {
         var workAnnictId = workHeading.data('annict-id');
         removeWatchingWorksJson(workAnnictId);
@@ -263,8 +256,7 @@ function setupUpdateStatusEvent(target, state, prefix) {
 
         alertMessage('変更完了', 'info');
       },
-      updateStatusQuery,
-      variables
+      id, state
     );
   });
 }
@@ -277,10 +269,10 @@ function setupEvent(template) {
   setupWorkReviewEvent(template.find('.work-review'));
   setupEpisodeRecordEvent(template.find('.episode-record'));
 
-  setupEpisodeNextPrevEvent(template.find('.episode-skip-prev'), prevEpisodeQuery, 'prevEpisode', true);
-  setupEpisodeNextPrevEvent(template.find('.episode-prev'), prevEpisodeQuery, 'prevEpisode', false);
-  setupEpisodeNextPrevEvent(template.find('.episode-next'), nextEpisodeQuery, 'nextEpisode', false);
-  setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), nextEpisodeQuery, 'nextEpisode', true);
+  setupEpisodeNextPrevEvent(template.find('.episode-skip-prev'), api.prevEpisode, 'prevEpisode', true);
+  setupEpisodeNextPrevEvent(template.find('.episode-prev'), api.prevEpisode, 'prevEpisode', false);
+  setupEpisodeNextPrevEvent(template.find('.episode-next'), api.nextEpisode, 'nextEpisode', false);
+  setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), api.nextEpisode, 'nextEpisode', true);
 
   $('#update').click(function() {
     updateWatchingWorksJson(function() {

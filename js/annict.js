@@ -1,276 +1,361 @@
 var version = 1;
 
-var workFields
-  =  'id '
-  +  'annictId '
-  +  'title '
-  +  'titleKana '
-;
+var api = new function() {
 
-var episodeFields
-  =  'id '
-  +  'annictId '
-  +  'numberText '
-  +  'title '
-  +  'viewerDidTrack '
-;
+  var workFields
+    = 'id '
+    + 'annictId '
+    + 'title '
+    + 'titleKana '
+  ;
 
-var watchingWorksQuery
-  =  'query($episodeAnnictIds: [Int!], $withEpisodes: Boolean!) { '
-  +    'viewer { '
-  +      'works(state: WATCHING) { '
-  +        'nodes { '
-  +           workFields
-  +          'episodes(orderBy: {field: SORT_NUMBER, direction: ASC}, first: 1) { '
-  +            'nodes { '
-  +               episodeFields
-  +            '} '
-  +          '} '
-  +        '} '
-  +      '} '
-  +    '} '
-  +    'searchEpisodes(annictIds: $episodeAnnictIds) @include(if: $withEpisodes) { '
-  +      'nodes { '
-  +         episodeFields
-  +        'work { '
-  +          'annictId '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '}'
-;
+  var episodeFields
+    = 'id '
+    + 'annictId '
+    + 'numberText '
+    + 'title '
+    + 'viewerDidTrack '
+  ;
 
-var nextEpisodeQuery
-  =  'query($id: Int!, $skip: Boolean!) { '
-  +    'searchEpisodes(annictIds: [$id]) { '
-  +      'nodes { '
-  +        'nextEpisode { '
-  +          '...episodeFields '
-  +          'nextEpisode @include(if: $skip) { '
-  +            '...episodeFields '
-  +            'nextEpisode { '
-  +              '...episodeFields '
-  +              'nextEpisode { '
-  +                '...episodeFields '
-  +                'nextEpisode { '
-  +                  '...episodeFields '
-  +                '} '
-  +              '} '
-  +            '} '
-  +          '} '
-  +        '} '
-  +        'work { '
-  +          'episodes(orderBy: {field: SORT_NUMBER, direction: ASC}, first: 1) { '
-  +            'nodes { '
-  +              '...episodeFields '
-  +            '} '
-  +          '} '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '} '
-  +  'fragment episodeFields on Episode { '
-  +     episodeFields
-  +  '}'
-;
+  var watchingWorksQuery
+    = 'query($episodeAnnictIds: [Int!], $withEpisodes: Boolean!) { '
+    +   'viewer { '
+    +     'works(state: WATCHING) { '
+    +       'nodes { '
+    +          workFields
+    +         'episodes(orderBy: {field: SORT_NUMBER, direction: ASC}, first: 1) { '
+    +           'nodes { '
+    +              episodeFields
+    +           '} '
+    +         '} '
+    +       '} '
+    +     '} '
+    +   '} '
+    +   'searchEpisodes(annictIds: $episodeAnnictIds) @include(if: $withEpisodes) { '
+    +     'nodes { '
+    +        episodeFields
+    +       'work { '
+    +         'annictId '
+    +       '} '
+    +     '} '
+    +   '} '
+    + '}'
+  ;
 
-var prevEpisodeQuery
-  =  'query($id: Int!, $skip: Boolean!) { '
-  +    'searchEpisodes(annictIds: [$id]) { '
-  +      'nodes { '
-  +        'prevEpisode { '
-  +          '...episodeFields '
-  +          'prevEpisode @include(if: $skip) { '
-  +            '...episodeFields '
-  +            'prevEpisode { '
-  +              '...episodeFields '
-  +              'prevEpisode { '
-  +                '...episodeFields '
-  +                'prevEpisode { '
-  +                  '...episodeFields '
-  +                '} '
-  +              '} '
-  +            '} '
-  +          '} '
-  +        '} '
-  +        'work { '
-  +          'episodes(orderBy: {field: SORT_NUMBER, direction: DESC}, first: 1) { '
-  +            'nodes { '
-  +              '...episodeFields '
-  +            '} '
-  +          '} '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '} '
-  +  'fragment episodeFields on Episode { '
-  +     episodeFields
-  +  '}'
-;
+  var nextEpisodeQuery
+    = 'query($id: Int!, $skip: Boolean!) { '
+    +   'searchEpisodes(annictIds: [$id]) { '
+    +     'nodes { '
+    +       'nextEpisode { '
+    +         '...episodeFields '
+    +         'nextEpisode @include(if: $skip) { '
+    +           '...episodeFields '
+    +           'nextEpisode { '
+    +             '...episodeFields '
+    +             'nextEpisode { '
+    +               '...episodeFields '
+    +               'nextEpisode { '
+    +                 '...episodeFields '
+    +               '} '
+    +             '} '
+    +           '} '
+    +         '} '
+    +       '} '
+    +       'work { '
+    +         'episodes(orderBy: {field: SORT_NUMBER, direction: ASC}, first: 1) { '
+    +           'nodes { '
+    +             '...episodeFields '
+    +           '} '
+    +         '} '
+    +       '} '
+    +     '} '
+    +   '} '
+    + '} '
+    + 'fragment episodeFields on Episode { '
+    +    episodeFields
+    + '}'
+  ;
 
-var createRecordQuery
-  =  'mutation($id: ID!, $rating: RatingState, $comment: String, $twitter: Boolean, $facebook: Boolean) { '
-  +    'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment, shareTwitter: $twitter, shareFacebook: $facebook}) { '
-  +      'record { '
-  +        'episode { '
-  +           episodeFields
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '}'
-;
+  var prevEpisodeQuery
+    = 'query($id: Int!, $skip: Boolean!) { '
+    +   'searchEpisodes(annictIds: [$id]) { '
+    +     'nodes { '
+    +       'prevEpisode { '
+    +         '...episodeFields '
+    +         'prevEpisode @include(if: $skip) { '
+    +           '...episodeFields '
+    +           'prevEpisode { '
+    +             '...episodeFields '
+    +             'prevEpisode { '
+    +               '...episodeFields '
+    +               'prevEpisode { '
+    +                 '...episodeFields '
+    +               '} '
+    +             '} '
+    +           '} '
+    +         '} '
+    +       '} '
+    +       'work { '
+    +         'episodes(orderBy: {field: SORT_NUMBER, direction: DESC}, first: 1) { '
+    +           'nodes { '
+    +             '...episodeFields '
+    +           '} '
+    +         '} '
+    +       '} '
+    +     '} '
+    +   '} '
+    + '} '
+    + 'fragment episodeFields on Episode { '
+    +    episodeFields
+    + '}'
+  ;
 
-var createReviewQuery
-  =  'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState, $twitter: Boolean, $facebook: Boolean) { '
-  +    'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character, shareTwitter: $twitter, shareFacebook: $facebook}) { '
-  +      'review { '
-  +        'work { '
-  +          'title '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '}'
-;
+  var createRecordQuery
+    = 'mutation($id: ID!, $rating: RatingState, $comment: String, $twitter: Boolean, $facebook: Boolean) { '
+    +   'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment, shareTwitter: $twitter, shareFacebook: $facebook}) { '
+    +     'record { '
+    +       'episode { '
+    +          episodeFields
+    +       '} '
+    +     '} '
+    +   '} '
+    + '}'
+  ;
 
-var updateStatusQuery
-  =  'mutation($id: ID!, $state: StatusState!) { '
-  +    'updateStatus(input: {workId: $id, state: $state}) { '
-  +      'work { '
-  +         workFields
-  +        'episodes(first: 1, orderBy: {field: SORT_NUMBER, direction: ASC}) { '
-  +          'nodes { '
-  +             episodeFields
-  +          '} '
-  +        '} '
-  +      '} '
-  +    '} '
-  +  '} '
-;
+  var createReviewQuery
+    = 'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState, $twitter: Boolean, $facebook: Boolean) { '
+    +   'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character, shareTwitter: $twitter, shareFacebook: $facebook}) { '
+    +     'review { '
+    +       'work { '
+    +         'title '
+    +       '} '
+    +     '} '
+    +   '} '
+    + '}'
+  ;
 
-var searchWorksQuery
-  =  'query($titles: [String!]!, $before: String, $after: String, $first: Int, $last: Int) { '
-  +    'searchWorks(titles: $titles, orderBy: {field: SEASON, direction: DESC}, before: $before, after: $after, first: $first, last: $last) { '
-  +      'nodes { '
-  +         workFields
-  +        'viewerStatusState '
-  +      '} '
-  +      'pageInfo { '
-  +        'startCursor '
-  +        'endCursor '
-  +        'hasPreviousPage '
-  +        'hasNextPage '
-  +      '} '
-  +    '} '
-  +  '}'
-;
+  var updateStatusQuery
+    = 'mutation($id: ID!, $state: StatusState!) { '
+    +   'updateStatus(input: {workId: $id, state: $state}) { '
+    +     'work { '
+    +        workFields
+    +       'episodes(first: 1, orderBy: {field: SORT_NUMBER, direction: ASC}) { '
+    +         'nodes { '
+    +            episodeFields
+    +         '} '
+    +       '} '
+    +     '} '
+    +   '} '
+    + '} '
+  ;
 
+  var searchWorksQuery
+    = 'query($titles: [String!]!, $before: String, $after: String, $first: Int, $last: Int) { '
+    +   'searchWorks(titles: $titles, orderBy: {field: SEASON, direction: DESC}, before: $before, after: $after, first: $first, last: $last) { '
+    +     'nodes { '
+    +        workFields
+    +       'viewerStatusState '
+    +     '} '
+    +     'pageInfo { '
+    +       'startCursor '
+    +       'endCursor '
+    +       'hasPreviousPage '
+    +       'hasNextPage '
+    +     '} '
+    +   '} '
+    + '}'
+  ;
+
+  var postQuery = function (success, query, variables) {
+    var ajax = function(token, callback) {
+      var data = {
+        query: query.replace(spaceReg, ' ')
+      };
+
+      if (variables) {
+        data.variables = variables;
+      }
+
+      $.ajax({
+        url: 'https://api.annict.com/graphql',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+          Authorization: 'bearer ' + token
+        },
+        data: JSON.stringify(data),
+        success: callback,
+        error: function(xhr) {
+          var message = '';
+          if (xhr.responseText) {
+              message = ': ';
+              try {
+                var json = JSON.parse(xhr.responseText);
+                if (json.message) {
+                  message += json.message;
+                }
+              } catch(e) {
+                message += xhr.responseText;
+              }
+          }
+          alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+        }
+      });
+    };
+
+    var token = sessionStorage.getItem('token');
+    if (!token) {
+      token = localStorage.getItem('token');
+    }
+
+    if (token) {
+      ajax(token, success);
+      return;
+    }
+
+    $('#token-modal-ok').unbind('click').bind('click', function() {
+      var token = $('#token').val();
+      if (token) {
+        var storage = $('[name="storage"]:checked').val();
+        ajax(token, function(json) {
+          sessionStorage.removeItem('token');
+          localStorage.removeItem('token');
+
+          if (storage == 'session') {
+            sessionStorage.setItem('token', token);
+          } else if (storage == 'local') {
+            localStorage.setItem('token', token);
+          }
+
+          if (success) {
+            success(json);
+          }
+        });
+      } else {
+        alertMessage('アクセストークンを入力してください。', 'danger');
+      }
+      $('#token-modal').modal('hide');
+    });
+
+    $('#token-modal').modal();
+  };
+
+  this.watchingWorks = function(success, episodeAnnictIds) {
+    var variables = {
+      episodeAnnictIds: episodeAnnictIds,
+      withEpisodes: (episodeAnnictIds.length > 0)
+    };
+    postQuery(success, watchingWorksQuery, variables);
+  };
+
+  this.prevEpisode = function(success, id, skip) {
+    var variables = {
+      id: id,
+      skip: skip
+    };
+    postQuery(success, prevEpisodeQuery, variables);
+  };
+
+  this.nextEpisode = function(success, id, skip) {
+    var variables = {
+      id: id,
+      skip: skip
+    };
+    postQuery(success, nextEpisodeQuery, variables);
+  };
+
+  this.createReview = function(success, id, body, overall, animation, music, story, character, twitter, facebook) {
+
+    var variables = {
+      id: id,
+      body: body
+    };
+
+    if (overall) {
+      variables.overall = overall;
+    }
+    if (animation) {
+      variables.animation = animation;
+    }
+    if (music) {
+      variables.music = music;
+    }
+    if (story) {
+      variables.story = story;
+    }
+    if (character) {
+      variables.character = character;
+    }
+    if (twitter) {
+      variables.twitter = twitter;
+    }
+    if (facebook) {
+      variables.facebook = facebook;
+    }
+
+    postQuery(success, createReviewQuery, variables);
+  };
+
+  this.createRecord = function(success, id, rating, comment, twitter, facebook) {
+
+    var variables = {
+      id: id
+    };
+
+    if (rating) {
+      variables.rating = rating;
+    }
+    if (comment) {
+      variables.comment = comment;
+    }
+    if (twitter) {
+      variables.twitter = twitter;
+    }
+    if (facebook) {
+      variables.facebook = facebook;
+    }
+
+    postQuery(success, createRecordQuery, variables);
+  };
+
+  this.updateStatus = function(success, id, status) {
+    var variables = {
+      id: id,
+      state: state
+    };
+    postQuery(success, updateStatusQuery, variables);
+  };
+
+  this.searchWorks = function(success, titles, before, after) {
+
+    var elements = 20;
+
+    var variables = {
+      titles: titles,
+      before: before,
+      after: after
+    };
+
+    if (before) {
+      variables.last = elements;
+    } else {
+      variables.first = elements;
+    }
+
+    postQuery(success, searchWorksQuery, variables);
+  };
+
+};
 
 var watchingWorksJson;
 var searchWorksJson;
 var spaceReg = /[\s　]+/g;
 
-function getIdVariables(id) {
-  return {
-    id: id
-  };
-}
-
-function getIdsVariables(ids) {
-  return {
-    ids: $.isArray(ids) ? ids : [ids]
-  };
-}
-
-function getStateVariables(id, state) {
-  return {
-    id: id,
-    state: state
-  };
-}
-
-function getWatchingWorksVariables(episodeAnnictIds) {
-  return {
-    episodeAnnictIds: episodeAnnictIds,
-    withEpisodes: (episodeAnnictIds.length > 0)
-  };
-}
-
-function getSearchWorksVariables(titles, before, after) {
-  var elements = 20;
-
-  var variables = {
-    titles: titles.split(spaceReg),
-    before: before,
-    after: after
-  };
-
-  if (before) {
-    variables.last = elements;
-  } else {
-    variables.first = elements;
-  }
-
-  return variables;
-}
-
-function getEpisodeRecordVariables(id, rating, comment, twitter, facebook) {
-  var variables = {
-    id: id
-  };
-
-  if (rating) {
-    variables.rating = rating;
-  }
-  if (comment) {
-    variables.comment = comment;
-  }
-  if (twitter) {
-    variables.twitter = twitter;
-  }
-  if (facebook) {
-    variables.facebook = facebook;
-  }
-
-  return variables;
-}
-
-function getWorkReviewVariables(id, body, overall, animation, music, story, character, twitter, facebook) {
-  var variables = {
-    id: id,
-    body: body
-  };
-
-  if (overall) {
-    variables.overall = overall;
-  }
-  if (animation) {
-    variables.animation = animation;
-  }
-  if (music) {
-    variables.music = music;
-  }
-  if (story) {
-    variables.story = story;
-  }
-  if (character) {
-    variables.character = character;
-  }
-  if (twitter) {
-    variables.twitter = twitter;
-  }
-  if (facebook) {
-    variables.facebook = facebook;
-  }
-
-  return variables;
-}
-
 function updateWatchingWorksJson(callback) {
-  var variables = getWatchingWorksVariables(watchingWorksJson.episodeAnnictIds);
-
-  postQuery(
+  api.watchingWorks(
     function(json) {
-      if (variables.withEpisodes) {
+      if (json.data.searchEpisodes) {
         var works = json.data.viewer.works.nodes;
 
         json.data.searchEpisodes.nodes.forEach(function(episode) {
@@ -291,8 +376,7 @@ function updateWatchingWorksJson(callback) {
       saveWatchingWorksJson();
       callback();
     },
-    watchingWorksQuery,
-    variables
+    watchingWorksJson.episodeAnnictIds
   );
 }
 
@@ -435,80 +519,6 @@ function alertMessage(message, type, delay) {
   });
 }
 
-function postQuery(success, query, variables) {
-  var ajax = function(token, callback) {
-    var data = {
-      query: query.replace(spaceReg, ' ')
-    };
-
-    if (variables) {
-      data.variables = variables;
-    }
-
-    $.ajax({
-      url: 'https://api.annict.com/graphql',
-      type: 'POST',
-      contentType: 'application/json',
-      dataType: 'json',
-      headers: {
-        Authorization: 'bearer ' + token
-      },
-      data: JSON.stringify(data),
-      success: callback,
-      error: function(xhr) {
-        var message = '';
-        if (xhr.responseText) {
-            message = ': ';
-            try {
-              var json = JSON.parse(xhr.responseText);
-              if (json.message) {
-                message += json.message;
-              }
-            } catch(e) {
-              message += xhr.responseText;
-            }
-        }
-        alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
-      }
-    });
-  };
-
-  var token = sessionStorage.getItem('token');
-  if (!token) {
-    token = localStorage.getItem('token');
-  }
-
-  if (token) {
-    ajax(token, success);
-    return;
-  }
-
-  $('#token-modal-ok').unbind('click').bind('click', function() {
-    var token = $('#token').val();
-    if (token) {
-      var storage = $('[name="storage"]:checked').val();
-      ajax(token, function(json) {
-        sessionStorage.removeItem('token');
-        localStorage.removeItem('token');
-
-        if (storage == 'session') {
-          sessionStorage.setItem('token', token);
-        } else if (storage == 'local') {
-          localStorage.setItem('token', token);
-        }
-
-        if (success) {
-          success(json);
-        }
-      });
-    } else {
-      alertMessage('アクセストークンを入力してください。', 'danger');
-    }
-    $('#token-modal').modal('hide');
-  });
-
-  $('#token-modal').modal();
-}
 
 $(function() {
   $('#alert').click(function() {
