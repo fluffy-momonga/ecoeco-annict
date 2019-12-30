@@ -322,7 +322,7 @@ var api = new function() {
   this.updateStatus = function(success, id, status) {
     var variables = {
       id: id,
-      state: state
+      state: status
     };
     postQuery(success, updateStatusQuery, variables);
   };
