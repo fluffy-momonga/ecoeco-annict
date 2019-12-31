@@ -36,16 +36,16 @@ function getEpisodeBody(episode, work) {
 }
 
 var groupList = [
-  {title: 'あ', reg: /^[ぁ-おァ-オ]/, works: []},
-  {title: 'か', reg: /^[か-ごカ-ゴ]/, works: []},
-  {title: 'さ', reg: /^[さ-ぞサ-ゾ]/, works: []},
-  {title: 'た', reg: /^[た-どタ-ド]/, works: []},
-  {title: 'な', reg: /^[な-のナ-ノ]/, works: []},
-  {title: 'は', reg: /^[は-ぽゔハ-ポヴ]/, works: []},
-  {title: 'ま', reg: /^[ま-もマ-モ]/, works: []},
-  {title: 'や', reg: /^[ゃ-よャ-ヨ]/, works: []},
-  {title: 'ら', reg: /^[ら-ろラ-ロ]/, works: []},
-  {title: 'わ', reg: /^[ゎ-んヮ-ン]/, works: []},
+  {title: 'あ', reg: /^[ぁ-お]/, works: []},
+  {title: 'か', reg: /^[か-ご]/, works: []},
+  {title: 'さ', reg: /^[さ-ぞ]/, works: []},
+  {title: 'た', reg: /^[た-ど]/, works: []},
+  {title: 'な', reg: /^[な-の]/, works: []},
+  {title: 'は', reg: /^[は-ぽゔ]/, works: []},
+  {title: 'ま', reg: /^[ま-も]/, works: []},
+  {title: 'や', reg: /^[ゃ-よ]/, works: []},
+  {title: 'ら', reg: /^[ら-ろ]/, works: []},
+  {title: 'わ', reg: /^[ゎ-ん]/, works: []},
   {title: '他', reg: /^./, works: []}
 ];
 
@@ -53,9 +53,9 @@ function renderWatchingWorks() {
   clearWatchingWorks();
 
   watchingWorksJson.data.viewer.works.nodes.forEach(function(work) {
+    var title = new TitleNormalizer(work);
     for (var i = 0; i < groupList.length; i++) {
-      var reg = groupList[i].reg;
-      if (reg.test(work.titleKana) || reg.test(work.title)) {
+      if (groupList[i].reg.test(title.getKana())) {
         groupList[i].works.push(work);
         break;
       }

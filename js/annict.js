@@ -1,6 +1,11 @@
 var version = 1;
+var watchingWorksJson;
+var searchWorksJson;
 
 var api = new function() {
+
+  var searchResults = 20;
+  var spaceReg = /[\s　]+/g;
 
   var workFields
     = 'id '
@@ -327,9 +332,14 @@ var api = new function() {
     postQuery(success, updateStatusQuery, variables);
   };
 
-  this.searchWorks = function(success, titles, before, after) {
+  this.searchWorks = function(success, title, before, after) {
 
-    var elements = 20;
+    var titles = title.split(spaceReg);
+
+    if (titles.length == 0 || !titles[0]) {
+      alertMessage('タイトルを入力してください。', 'danger');
+      return;
+    }
 
     var variables = {
       titles: titles,
@@ -338,19 +348,59 @@ var api = new function() {
     };
 
     if (before) {
-      variables.last = elements;
+      variables.last = searchResults;
     } else {
-      variables.first = elements;
+      variables.first = searchResults;
     }
 
     postQuery(success, searchWorksQuery, variables);
   };
-
 };
 
-var watchingWorksJson;
-var searchWorksJson;
-var spaceReg = /[\s　]+/g;
+var TitleNormalizer = $.extend(
+  function(work) {
+    this.work = work;
+    this.normalize();
+  }.prototype,
+  {
+    katakanaRegExp: /[ァ-ヶ]/g,
+    altRegExp: /^ゔ[ぁぃぅぇぉ]?/,
+    altHash: {'ゔぁ': 'ば', 'ゔぃ': 'び', 'ゔ': 'ぶ', 'ゔぅ': 'ぶ', 'ゔぇ': 'べ', 'ゔぉ': 'ぼ'},
+
+    normalize: function() {
+      if (!this.work.titleKana) {
+        this.work.titleKana = this.work.title.replace(this.katakanaRegExp, this.toHiragana);
+      }
+      this.work.titleKana = this.work.titleKana.replace(this.altRegExp, this.alternate);
+    },
+
+    toHiragana: function(target) {
+      var code = target.charCodeAt(0) - 0x60;
+      return String.fromCharCode(code);
+    },
+
+    alternate: function(target) {
+      return this.altHash[target];
+    },
+
+    getKana: function() {
+      return this.work.titleKana;
+    },
+
+    compare: function(another) {
+      var kana1 = this.getKana();
+      var kana2 = another.getKana();
+
+      if (kana1 < kana2) {
+        return -1;
+      } else if (kana1 > kana2) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  }
+).constructor;
 
 function updateWatchingWorksJson(callback) {
   api.watchingWorks(
@@ -400,27 +450,10 @@ function loadWatchingWorksJson() {
   };
 }
 
-var altReg = /^ゔ[ぁぃぅぇぉ]?|^ヴ[ァィゥェォ]?/;
-var altDic = {
-  'ゔぁ': 'ば', 'ゔぃ': 'び', 'ゔ': 'ぶ', 'ゔぅ': 'ぶ', 'ゔぇ': 'べ', 'ゔぉ': 'ぼ',
-  'ヴァ': 'バ', 'ヴィ': 'ビ', 'ヴ': 'ブ', 'ヴゥ': 'ブ', 'ヴェ': 'ベ', 'ヴォ': 'ボ'
-};
-var altRep = function(match) {
-  return altDic[match];
-};
-
 function saveWatchingWorksJson() {
 
-  watchingWorksJson.data.viewer.works.nodes.sort(function(a, b) {
-    var title1 = a.titleKana ? a.titleKana.replace(altReg, altRep) : a.title.replace(altReg, altRep);
-    var title2 = b.titleKana ? b.titleKana.replace(altReg, altRep) : b.title.replace(altReg, altRep);
-
-    if (title1 < title2) {
-      return -1;
-    } else if (title1 > title2) {
-      return 1;
-    }
-    return 0;
+  watchingWorksJson.data.viewer.works.nodes.sort(function(work1, work2) {
+    return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2))
   });
 
   watchingWorksJson.episodeAnnictIds = [];

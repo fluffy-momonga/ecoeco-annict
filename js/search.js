@@ -26,13 +26,6 @@ function renderSearchWorks() {
 
 function searchWorks(before, after) {
   var title = $('#title').val();
-  var titles = title.split(spaceReg);
-
-  if (titles.length == 0 || !titles[0]) {
-    alertMessage('タイトルを入力してください。', 'danger');
-    return;
-  }
-
   api.searchWorks(
     function(json) {
       searchWorksJson = json;
@@ -44,7 +37,7 @@ function searchWorks(before, after) {
         alertMessage('対象の作品が見つかりませんでした。', 'warning');
       }
     },
-    titles, before, after
+    title, before, after
   );
 }
 
