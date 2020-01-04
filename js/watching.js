@@ -27,8 +27,9 @@ function getEpisodeBody(episode, work) {
   var title = episodeBody.find('.episode-title').text(episode.title ? episode.title : '');
 
   if (episode.viewerDidTrack) {
-    record.prop('disabled', true);
+    record.attr('disabled', 'disabled');
   } else {
+    record.removeAttr('disabled');
     title.hide();
   }
 

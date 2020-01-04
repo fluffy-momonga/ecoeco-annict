@@ -37,6 +37,9 @@ h6 {
 .episode-body.panel-body {
   padding: 5px 15px;
 }
+.episode-record[disabled] {
+  cursor: pointer;
+}
 .work-link,
 .episode-link {
   margin-left: 5px;
