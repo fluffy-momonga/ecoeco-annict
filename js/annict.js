@@ -4,8 +4,9 @@ var searchWorksJson;
 
 var api = new function() {
 
+  var endpoint = 'https://api.annict.com/graphql';
   var searchResults = 20;
-  var spaceReg = /[\s　]+/g;
+  var spaceRegExp = /[\s　]+/g;
 
   var workFields
     = 'id '
@@ -174,7 +175,7 @@ var api = new function() {
   var postQuery = function (success, query, variables) {
     var ajax = function(token, callback) {
       var data = {
-        query: query.replace(spaceReg, ' ')
+        query: query.replace(spaceRegExp, ' ')
       };
 
       if (variables) {
@@ -182,7 +183,7 @@ var api = new function() {
       }
 
       $.ajax({
-        url: 'https://api.annict.com/graphql',
+        url: endpoint,
         type: 'POST',
         contentType: 'application/json',
         dataType: 'json',
@@ -334,7 +335,7 @@ var api = new function() {
 
   this.searchWorks = function(success, title, before, after) {
 
-    var titles = title.split(spaceReg);
+    var titles = title.split(spaceRegExp);
 
     if (titles.length == 0 || !titles[0]) {
       alertMessage('タイトルを入力してください。', 'danger');
@@ -453,7 +454,7 @@ function loadWatchingWorksJson() {
 function saveWatchingWorksJson() {
 
   watchingWorksJson.data.viewer.works.nodes.sort(function(work1, work2) {
-    return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2))
+    return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2));
   });
 
   watchingWorksJson.episodeAnnictIds = [];

@@ -25,7 +25,7 @@ function renderSearchWorks() {
 }
 
 function searchWorks(before, after) {
-  var title = $('#title').val();
+  var title = $('#title').val().trim();
   api.searchWorks(
     function(json) {
       searchWorksJson = json;
@@ -78,11 +78,13 @@ $(function() {
 
   $('#pager-prev a').click(function() {
     $(this).blur();
+    $(window).scrollTop(0);
     searchWorks(searchWorksJson.data.searchWorks.pageInfo.startCursor, null);
   });
 
   $('#pager-next a').click(function() {
     $(this).blur();
+    $(window).scrollTop(0);
     searchWorks(null, searchWorksJson.data.searchWorks.pageInfo.endCursor);
   });
 

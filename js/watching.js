@@ -41,7 +41,7 @@ var groupList = [
   {title: 'さ', reg: /^[さ-ぞ]/, works: []},
   {title: 'た', reg: /^[た-ど]/, works: []},
   {title: 'な', reg: /^[な-の]/, works: []},
-  {title: 'は', reg: /^[は-ぽゔ]/, works: []},
+  {title: 'は', reg: /^[は-ぽ]/, works: []},
   {title: 'ま', reg: /^[ま-も]/, works: []},
   {title: 'や', reg: /^[ゃ-よ]/, works: []},
   {title: 'ら', reg: /^[ら-ろ]/, works: []},
