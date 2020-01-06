@@ -481,59 +481,6 @@ var TitleNormalizer = $.extend(
   }
 ).constructor;
 
-function updateWatchingWorksJson(callback) {
-  api.watchingWorks(
-    function(json) {
-      if (json.data.searchEpisodes) {
-        var works = json.data.viewer.works.nodes;
-
-        json.data.searchEpisodes.nodes.forEach(function(episode) {
-          var workAnnictId = episode.work.annictId;
-          for (var i = 0; i < works.length; i++) {
-            if (works[i].annictId == workAnnictId) {
-              delete episode.work;
-              works[i].episodes.nodes = [episode];
-              break;
-            }
-          }
-        });
-
-        delete json.data.searchEpisodes;
-      }
-
-      watchingWorksJsonCache.set(json);
-      watchingWorksJsonCache.save();
-      callback();
-    },
-    watchingWorksJsonCache.get().episodeAnnictIds
-  );
-}
-
-function addWatchingWorksJson(work) {
-  var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
-  for (var i = 0; i < works.length; i++) {
-    if (works[i].annictId == work.annictId) {
-      return false;
-    }
-  }
-
-  works.push(work);
-  watchingWorksJsonCache.save();
-  return true;
-}
-
-function removeWatchingWorksJson(workAnnictId) {
-  var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
-  for (var i = 0; i < works.length; i++) {
-    if (works[i].annictId == workAnnictId) {
-      works.splice(i, 1);
-      watchingWorksJsonCache.save();
-      return true;
-    }
-  }
-  return false;
-}
-
 function alertMessage(message, type, delay) {
   var alert = $('#alert');
   var alertBg = alert.find('#alert-bg');
