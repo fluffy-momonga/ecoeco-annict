@@ -1,9 +1,91 @@
 var version = 1;
-var watchingWorksJson;
-var searchWorksJson;
+
+var StorageCache = $.extend(
+  $.extend(
+    function(key) {
+      this.key = key;
+      this.useLocalStorage();
+    }.prototype,
+    {
+      get: function() {
+        return this.storage.getItem(this.key);
+      },
+
+      set: function(item) {
+        this.storage.setItem(this.key, item);
+      },
+
+      remove: function() {
+        this.storage.removeItem(this.key);
+      },
+
+      useLocalStorage: function() {
+        this.storage = localStorage;
+        return this;
+      },
+
+      useSessionStorage: function() {
+        this.storage = sessionStorage;
+        return this;
+      }
+    }
+  ).constructor,
+  {
+    clear: function() {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
+  }
+);
+
+var JsonCache = Object.setPrototypeOf(
+  $.extend(
+    function(key) {
+      StorageCache.call(this, key);
+      this.load();
+    }.prototype,
+    {
+      get: function(item) {
+        return this.item;
+      },
+
+      set: function(item) {
+        this.item = item;
+      },
+
+      remove: function() {
+        StorageCache.prototype.remove.call(this);
+        this.item = this.getDefault();
+      },
+
+      load: function() {
+        var item = StorageCache.prototype.get.call(this);
+        if (item) {
+          try {
+              this.item = JSON.parse(item);
+              return;
+          } catch (e) {
+          }
+        }
+        this.item = this.getDefault();
+      },
+
+      save: function() {
+        this.item.version = version;
+        setTimeout(function() {
+          StorageCache.prototype.set.call(this, JSON.stringify(this.item));
+        }.bind(this), 0);
+      },
+
+      getDefault: function() {
+        return {};
+      }
+    }
+  ),
+  StorageCache.prototype
+).constructor;
 
 var api = new function() {
-
   var endpoint = 'https://api.annict.com/graphql';
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
@@ -172,6 +254,8 @@ var api = new function() {
     + '}'
   ;
 
+  var tokenCache = new StorageCache('token');
+
   var postQuery = function (success, query, variables) {
     var ajax = function(token, callback) {
       var data = {
@@ -201,7 +285,7 @@ var api = new function() {
                 if (json.message) {
                   message += json.message;
                 }
-              } catch(e) {
+              } catch (e) {
                 message += xhr.responseText;
               }
           }
@@ -210,9 +294,9 @@ var api = new function() {
       });
     };
 
-    var token = sessionStorage.getItem('token');
+    var token = tokenCache.useLocalStorage().get();
     if (!token) {
-      token = localStorage.getItem('token');
+      token = tokenCache.useSessionStorage().get();
     }
 
     if (token) {
@@ -225,18 +309,12 @@ var api = new function() {
       if (token) {
         var storage = $('[name="storage"]:checked').val();
         ajax(token, function(json) {
-          sessionStorage.removeItem('token');
-          localStorage.removeItem('token');
-
           if (storage == 'session') {
-            sessionStorage.setItem('token', token);
+            tokenCache.useSessionStorage().set(token);
           } else if (storage == 'local') {
-            localStorage.setItem('token', token);
+            tokenCache.useLocalStorage().set(token);
           }
-
-          if (success) {
-            success(json);
-          }
+          success(json);
         });
       } else {
         alertMessage('アクセストークンを入力してください。', 'danger');
@@ -423,119 +501,37 @@ function updateWatchingWorksJson(callback) {
         delete json.data.searchEpisodes;
       }
 
-      watchingWorksJson = json;
-      saveWatchingWorksJson();
+      watchingWorksJsonCache.set(json);
+      watchingWorksJsonCache.save();
       callback();
     },
-    watchingWorksJson.episodeAnnictIds
+    watchingWorksJsonCache.get().episodeAnnictIds
   );
 }
 
-function loadWatchingWorksJson() {
-  var item = localStorage.getItem('watchingWorks');
-  if (item) {
-    watchingWorksJson = JSON.parse(item);
-    return;
-  }
-
-  watchingWorksJson = {
-    data: {
-      viewer: {
-        works: {
-          nodes: []
-        }
-      }
-    },
-    episodeAnnictIds: [],
-    version: version
-  };
-}
-
-function saveWatchingWorksJson() {
-
-  watchingWorksJson.data.viewer.works.nodes.sort(function(work1, work2) {
-    return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2));
-  });
-
-  watchingWorksJson.episodeAnnictIds = [];
-  watchingWorksJson.data.viewer.works.nodes.forEach(function(work) {
-    var episodes = work.episodes.nodes;
-    if (episodes.length > 0) {
-      watchingWorksJson.episodeAnnictIds.push(episodes[0].annictId);
-    }
-  });
-
-  watchingWorksJson.version = version;
-
-  setTimeout(function() {
-    localStorage.setItem('watchingWorks', JSON.stringify(watchingWorksJson));
-  }, 0);
-}
-
 function addWatchingWorksJson(work) {
-  var works = watchingWorksJson.data.viewer.works.nodes;
+  var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
   for (var i = 0; i < works.length; i++) {
     if (works[i].annictId == work.annictId) {
       return false;
     }
   }
 
-  watchingWorksJson.data.viewer.works.nodes.push(work);
-  saveWatchingWorksJson();
+  works.push(work);
+  watchingWorksJsonCache.save();
   return true;
 }
 
 function removeWatchingWorksJson(workAnnictId) {
-  var works = watchingWorksJson.data.viewer.works.nodes;
+  var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
   for (var i = 0; i < works.length; i++) {
     if (works[i].annictId == workAnnictId) {
       works.splice(i, 1);
-      saveWatchingWorksJson();
+      watchingWorksJsonCache.save();
       return true;
     }
   }
   return false;
-}
-
-function loadSearchWorksJson() {
-  var item = localStorage.getItem('searchWorks');
-  if (item) {
-    searchWorksJson = JSON.parse(item);
-    return;
-  }
-
-  searchWorksJson = {
-    data: {
-      searchWorks: {
-        nodes: [],
-        pageInfo: {
-          hasPreviousPage: false,
-          hasNextPage: false
-        }
-      }
-    },
-    title: '',
-    version: version
-  };
-}
-
-function saveSearchWorksJson() {
-  searchWorksJson.version = version;
-
-  setTimeout(function() {
-    localStorage.setItem('searchWorks', JSON.stringify(searchWorksJson));
-  }, 0);
-}
-
-function clearSearchWorksJson() {
-  localStorage.removeItem('searchWorks');
-  loadSearchWorksJson();
-  saveSearchWorksJson();
-}
-
-function clearStorage() {
-  localStorage.clear();
-  sessionStorage.clear();
 }
 
 function alertMessage(message, type, delay) {
@@ -553,11 +549,8 @@ function alertMessage(message, type, delay) {
   });
 }
 
-
 $(function() {
   $('#alert').click(function() {
     $(this).hide('fast');
   });
 });
-
-loadWatchingWorksJson();

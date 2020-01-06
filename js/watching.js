@@ -1,6 +1,46 @@
-function clearWatchingWorks() {
-  $('#watching-works').empty();
-}
+var watchingWorksJsonCache = new (
+  Object.setPrototypeOf(
+    $.extend(
+      function(key) {
+        JsonCache.call(this, key);
+      }.prototype,
+      {
+        save: function() {
+          var item = this.item;
+
+          item.data.viewer.works.nodes.sort(function(work1, work2) {
+            return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2));
+          });
+
+          item.episodeAnnictIds = [];
+          item.data.viewer.works.nodes.forEach(function(work) {
+            var episodes = work.episodes.nodes;
+            if (episodes.length > 0) {
+              item.episodeAnnictIds.push(episodes[0].annictId);
+            }
+          });
+
+          JsonCache.prototype.save.call(this);
+        },
+
+        getDefault: function() {
+          return {
+            data: {
+              viewer: {
+                works: {
+                  nodes: []
+                }
+              }
+            },
+            episodeAnnictIds: [],
+            version: version
+          };
+        }
+      }
+    ),
+    JsonCache.prototype
+  )
+).constructor('watchingWorks');
 
 function getWorkHeading(work) {
   var href = 'https://annict.jp/works/' + work.annictId;
@@ -29,7 +69,6 @@ function getEpisodeBody(episode, work) {
   if (episode.viewerDidTrack) {
     record.attr('disabled', 'disabled');
   } else {
-    record.removeAttr('disabled');
     title.hide();
   }
 
@@ -51,9 +90,8 @@ var groupList = [
 ];
 
 function renderWatchingWorks() {
-  clearWatchingWorks();
 
-  watchingWorksJson.data.viewer.works.nodes.forEach(function(work) {
+  watchingWorksJsonCache.get().data.viewer.works.nodes.forEach(function(work) {
     var title = new TitleNormalizer(work);
     for (var i = 0; i < groupList.length; i++) {
       if (groupList[i].reg.test(title.getKana())) {
@@ -63,7 +101,7 @@ function renderWatchingWorks() {
     }
   });
 
-  var watchingWorks = $('#watching-works');
+  var watchingWorks = $('#watching-works').empty();
 
   groupList.forEach(function(group) {
     if (group.works.length > 0) {
@@ -88,12 +126,12 @@ function renderWatchingWorks() {
 function updateEpisode(episode, workContents) {
 
   var annictId = workContents.filter('.work-heading').data('annict-id');
-  var works = watchingWorksJson.data.viewer.works.nodes;
+  var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
 
   for (var i = 0; i < works.length; i++) {
     if (works[i].annictId == annictId) {
       works[i].episodes.nodes[0] = episode;
-      saveWatchingWorksJson();
+      watchingWorksJsonCache.save();
 
       var episodeBody = getEpisodeBody(episode, works[i]);
       workContents.filter('.episode-body').remove();
@@ -283,9 +321,11 @@ function setupEvent(template) {
   });
 
   $('#clear').click(function() {
-    clearWatchingWorks();
-    clearStorage();
-    loadWatchingWorksJson();
+    StorageCache.clear();
+    watchingWorksJsonCache.remove();
+    searchWorksJsonCache.remove();
+    renderWatchingWorks();
+    renderSearchWorks();
     alertMessage('クリア完了', 'info');
   });
 }
@@ -293,7 +333,7 @@ function setupEvent(template) {
 $(function() {
   setupEvent($('#group-template'));
 
-  if (watchingWorksJson.version != version) {
+  if (watchingWorksJsonCache.get().version != version) {
     updateWatchingWorksJson(function(){
       renderWatchingWorks();
     });

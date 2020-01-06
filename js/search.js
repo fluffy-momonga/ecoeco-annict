@@ -1,6 +1,33 @@
-loadSearchWorksJson();
+var searchWorksJsonCache = new (
+  Object.setPrototypeOf(
+    $.extend(
+      function(key) {
+        JsonCache.call(this, key);
+      }.prototype,
+      {
+        getDefault: function() {
+          return {
+            data: {
+              searchWorks: {
+                nodes: [],
+                pageInfo: {
+                  hasPreviousPage: false,
+                  hasNextPage: false
+                }
+              }
+            },
+            title: '',
+            version: version
+          };
+        }
+      }
+    ),
+    JsonCache.prototype
+  )
+).constructor('searchWorks');
 
 function renderSearchWorks() {
+  var searchWorksJson = searchWorksJsonCache.get();
 
   $('#title').val(searchWorksJson.title);
 
@@ -28,9 +55,9 @@ function searchWorks(before, after) {
   var title = $('#title').val().trim();
   api.searchWorks(
     function(json) {
-      searchWorksJson = json;
-      searchWorksJson.title = title;
-      saveSearchWorksJson();
+      json.title = title;
+      searchWorksJsonCache.set(json);
+      searchWorksJsonCache.save();
       renderSearchWorks();
 
       if (json.data.searchWorks.nodes.length == 0) {
@@ -54,7 +81,7 @@ $(function() {
 
   $('#remove').click(function() {
     $(this).blur();
-    clearSearchWorksJson();
+    searchWorksJsonCache.remove();
     renderSearchWorks();
   });
 
@@ -79,13 +106,13 @@ $(function() {
   $('#pager-prev a').click(function() {
     $(this).blur();
     $(window).scrollTop(0);
-    searchWorks(searchWorksJson.data.searchWorks.pageInfo.startCursor, null);
+    searchWorks(searchWorksJsonCache.get().data.searchWorks.pageInfo.startCursor, null);
   });
 
   $('#pager-next a').click(function() {
     $(this).blur();
     $(window).scrollTop(0);
-    searchWorks(null, searchWorksJson.data.searchWorks.pageInfo.endCursor);
+    searchWorks(null, searchWorksJsonCache.get().data.searchWorks.pageInfo.endCursor);
   });
 
   renderSearchWorks();
