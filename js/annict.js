@@ -32,8 +32,8 @@ var StorageCache = $.extend(
   ).constructor,
   {
     clear: function() {
-      sessionStorage.clear();
       localStorage.clear();
+      sessionStorage.clear();
     }
   }
 );
@@ -45,35 +45,35 @@ var JsonCache = Object.setPrototypeOf(
       this.load();
     }.prototype,
     {
-      get: function(item) {
-        return this.item;
+      get: function() {
+        return this.json;
       },
 
-      set: function(item) {
-        this.item = item;
+      set: function(json) {
+        this.json = json;
       },
 
       remove: function() {
         StorageCache.prototype.remove.call(this);
-        this.item = this.getDefault();
+        this.json = this.getDefault();
       },
 
       load: function() {
         var item = StorageCache.prototype.get.call(this);
         if (item) {
           try {
-              this.item = JSON.parse(item);
+              this.json = JSON.parse(item);
               return;
           } catch (e) {
           }
         }
-        this.item = this.getDefault();
+        this.json = this.getDefault();
       },
 
       save: function() {
-        this.item.version = version;
+        this.json.version = version;
         setTimeout(function() {
-          StorageCache.prototype.set.call(this, JSON.stringify(this.item));
+          StorageCache.prototype.set.call(this, JSON.stringify(this.json));
         }.bind(this), 0);
       },
 

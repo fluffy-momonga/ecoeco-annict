@@ -6,17 +6,17 @@ var watchingWorksJsonCache = new (
       }.prototype,
       {
         save: function() {
-          var item = this.item;
+          var json = this.get();
 
-          item.data.viewer.works.nodes.sort(function(work1, work2) {
+          json.data.viewer.works.nodes.sort(function(work1, work2) {
             return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2));
           });
 
-          item.episodeAnnictIds = [];
-          item.data.viewer.works.nodes.forEach(function(work) {
+          json.episodeAnnictIds = [];
+          json.data.viewer.works.nodes.forEach(function(work) {
             var episodes = work.episodes.nodes;
             if (episodes.length > 0) {
-              item.episodeAnnictIds.push(episodes[0].annictId);
+              json.episodeAnnictIds.push(episodes[0].annictId);
             }
           });
 
@@ -41,6 +41,9 @@ var watchingWorksJsonCache = new (
     JsonCache.prototype
   )
 ).constructor('watchingWorks');
+
+var twitterCache = new StorageCache('twitter');
+var facebookCache = new StorageCache('facebook');
 
 function getWorkHeading(work) {
   var href = 'https://annict.jp/works/' + work.annictId;
@@ -142,14 +145,14 @@ function updateEpisode(episode, workContents) {
   }
 }
 
-function loadChecked(target, key) {
-  var value = localStorage.getItem(key);
+function loadChecked(target, cache) {
+  var value = cache.get();
   target.prop('checked', value == 'true');
 }
 
-function saveChecked(target, key) {
+function saveChecked(target, cache) {
   var value = target.prop('checked');
-  localStorage.setItem(key, value);
+  cache.set(value);
   return value;
 }
 
@@ -164,8 +167,8 @@ function setupWorkReviewEvent(target) {
     $('#review-work-title').text(workTitle);
     $('[name^="review-rating-"][value=""]').click();
     $('#review-body').val('');
-    loadChecked($('#review-twitter'), 'twitter');
-    loadChecked($('#review-facebook'), 'facebook');
+    loadChecked($('#review-twitter'), twitterCache);
+    loadChecked($('#review-facebook'), facebookCache);
 
     $('#review-modal').modal();
   });
@@ -177,8 +180,8 @@ function setupWorkReviewEvent(target) {
     var story = $('[name="review-rating-story"]:checked').val();
     var character = $('[name="review-rating-character"]:checked').val();
     var body = $('#review-body').val();
-    var twitter = saveChecked($('#review-twitter'), 'twitter');
-    var facebook = saveChecked($('#review-facebook'), 'facebook');
+    var twitter = saveChecked($('#review-twitter'), twitterCache);
+    var facebook = saveChecked($('#review-facebook'), facebookCache);
 
     $('#review-modal').modal('hide');
 
@@ -209,8 +212,8 @@ function setupEpisodeRecordEvent(target) {
     $('#record-episode-title').text(episodeTitle);
     $('[name="record-rating"][value=""]').click();
     $('#record-comment').val('');
-    loadChecked($('#record-twitter'), 'twitter');
-    loadChecked($('#record-facebook'), 'facebook');
+    loadChecked($('#record-twitter'), twitterCache);
+    loadChecked($('#record-facebook'), facebookCache);
 
     $('#record-modal').modal();
   });
@@ -218,8 +221,8 @@ function setupEpisodeRecordEvent(target) {
   $('#record-modal-ok').click(function() {
     var rating = $('[name="record-rating"]:checked').val();
     var comment = $('#record-comment').val();
-    var twitter = saveChecked($('#record-twitter'), 'twitter');
-    var facebook = saveChecked($('#record-facebook'), 'facebook');
+    var twitter = saveChecked($('#record-twitter'), twitterCache);
+    var facebook = saveChecked($('#record-facebook'), facebookCache);
 
     $('#record-modal').modal('hide');
 
