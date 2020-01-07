@@ -1,12 +1,8 @@
-var version = 1;
-var watchingWorksJson;
-var searchWorksJson;
-
 var api = new function() {
-
   var endpoint = 'https://api.annict.com/graphql';
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
+  var tokenCache = new StorageCache('token');
 
   var workFields
     = 'id '
@@ -172,51 +168,53 @@ var api = new function() {
     + '}'
   ;
 
-  var postQuery = function (success, query, variables) {
-    var ajax = function(token, callback) {
-      var data = {
-        query: query.replace(spaceRegExp, ' ')
-      };
-
-      if (variables) {
-        data.variables = variables;
-      }
-
-      $.ajax({
-        url: endpoint,
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        headers: {
-          Authorization: 'bearer ' + token
-        },
-        data: JSON.stringify(data),
-        success: callback,
-        error: function(xhr) {
-          var message = '';
-          if (xhr.responseText) {
-              message = ': ';
-              try {
-                var json = JSON.parse(xhr.responseText);
-                if (json.message) {
-                  message += json.message;
-                }
-              } catch(e) {
-                message += xhr.responseText;
-              }
+  var ajaxError = function(xhr) {
+    var message = '';
+    if (xhr.responseText) {
+        message = ': ';
+        try {
+          var json = JSON.parse(xhr.responseText);
+          if (json.message) {
+            message += json.message;
           }
-          alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+        } catch (e) {
+          message += xhr.responseText;
         }
-      });
+    }
+    alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+  };
+
+  var postQuery = function(success, query, variables, token) {
+    var data = {
+      query: query.replace(spaceRegExp, ' ')
     };
 
-    var token = sessionStorage.getItem('token');
+    if (variables) {
+      data.variables = variables;
+    }
+
+    $.ajax({
+      url: endpoint,
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      headers: {
+        Authorization: 'bearer ' + token
+      },
+      data: JSON.stringify(data),
+      success: success,
+      error: ajaxError
+    });
+  };
+
+  var request = function (success, query, variables) {
+    var token = tokenCache.useLocalStorage().get();
     if (!token) {
-      token = localStorage.getItem('token');
+      token = tokenCache.useSessionStorage().get();
     }
 
     if (token) {
-      ajax(token, success);
+      postQuery(success, query, variables, token);
       return;
     }
 
@@ -224,20 +222,17 @@ var api = new function() {
       var token = $('#token').val();
       if (token) {
         var storage = $('[name="storage"]:checked').val();
-        ajax(token, function(json) {
-          sessionStorage.removeItem('token');
-          localStorage.removeItem('token');
-
-          if (storage == 'session') {
-            sessionStorage.setItem('token', token);
-          } else if (storage == 'local') {
-            localStorage.setItem('token', token);
-          }
-
-          if (success) {
+        postQuery(
+          function(json) {
+            if (storage == 'session') {
+              tokenCache.useSessionStorage().set(token);
+            } else if (storage == 'local') {
+              tokenCache.useLocalStorage().set(token);
+            }
             success(json);
-          }
-        });
+          },
+          query, variables, token
+        );
       } else {
         alertMessage('アクセストークンを入力してください。', 'danger');
       }
@@ -252,7 +247,7 @@ var api = new function() {
       episodeAnnictIds: episodeAnnictIds,
       withEpisodes: (episodeAnnictIds.length > 0)
     };
-    postQuery(success, watchingWorksQuery, variables);
+    request(success, watchingWorksQuery, variables);
   };
 
   this.prevEpisode = function(success, id, skip) {
@@ -260,7 +255,7 @@ var api = new function() {
       id: id,
       skip: skip
     };
-    postQuery(success, prevEpisodeQuery, variables);
+    request(success, prevEpisodeQuery, variables);
   };
 
   this.nextEpisode = function(success, id, skip) {
@@ -268,7 +263,7 @@ var api = new function() {
       id: id,
       skip: skip
     };
-    postQuery(success, nextEpisodeQuery, variables);
+    request(success, nextEpisodeQuery, variables);
   };
 
   this.createReview = function(success, id, body, overall, animation, music, story, character, twitter, facebook) {
@@ -300,7 +295,7 @@ var api = new function() {
       variables.facebook = facebook;
     }
 
-    postQuery(success, createReviewQuery, variables);
+    request(success, createReviewQuery, variables);
   };
 
   this.createRecord = function(success, id, rating, comment, twitter, facebook) {
@@ -322,7 +317,7 @@ var api = new function() {
       variables.facebook = facebook;
     }
 
-    postQuery(success, createRecordQuery, variables);
+    request(success, createRecordQuery, variables);
   };
 
   this.updateStatus = function(success, id, status) {
@@ -330,7 +325,7 @@ var api = new function() {
       id: id,
       state: status
     };
-    postQuery(success, updateStatusQuery, variables);
+    request(success, updateStatusQuery, variables);
   };
 
   this.searchWorks = function(success, title, before, after) {
@@ -354,7 +349,7 @@ var api = new function() {
       variables.first = searchResults;
     }
 
-    postQuery(success, searchWorksQuery, variables);
+    request(success, searchWorksQuery, variables);
   };
 };
 
@@ -402,162 +397,3 @@ var TitleNormalizer = $.extend(
     }
   }
 ).constructor;
-
-function updateWatchingWorksJson(callback) {
-  api.watchingWorks(
-    function(json) {
-      if (json.data.searchEpisodes) {
-        var works = json.data.viewer.works.nodes;
-
-        json.data.searchEpisodes.nodes.forEach(function(episode) {
-          var workAnnictId = episode.work.annictId;
-          for (var i = 0; i < works.length; i++) {
-            if (works[i].annictId == workAnnictId) {
-              delete episode.work;
-              works[i].episodes.nodes = [episode];
-              break;
-            }
-          }
-        });
-
-        delete json.data.searchEpisodes;
-      }
-
-      watchingWorksJson = json;
-      saveWatchingWorksJson();
-      callback();
-    },
-    watchingWorksJson.episodeAnnictIds
-  );
-}
-
-function loadWatchingWorksJson() {
-  var item = localStorage.getItem('watchingWorks');
-  if (item) {
-    watchingWorksJson = JSON.parse(item);
-    return;
-  }
-
-  watchingWorksJson = {
-    data: {
-      viewer: {
-        works: {
-          nodes: []
-        }
-      }
-    },
-    episodeAnnictIds: [],
-    version: version
-  };
-}
-
-function saveWatchingWorksJson() {
-
-  watchingWorksJson.data.viewer.works.nodes.sort(function(work1, work2) {
-    return (new TitleNormalizer(work1)).compare(new TitleNormalizer(work2));
-  });
-
-  watchingWorksJson.episodeAnnictIds = [];
-  watchingWorksJson.data.viewer.works.nodes.forEach(function(work) {
-    var episodes = work.episodes.nodes;
-    if (episodes.length > 0) {
-      watchingWorksJson.episodeAnnictIds.push(episodes[0].annictId);
-    }
-  });
-
-  watchingWorksJson.version = version;
-
-  setTimeout(function() {
-    localStorage.setItem('watchingWorks', JSON.stringify(watchingWorksJson));
-  }, 0);
-}
-
-function addWatchingWorksJson(work) {
-  var works = watchingWorksJson.data.viewer.works.nodes;
-  for (var i = 0; i < works.length; i++) {
-    if (works[i].annictId == work.annictId) {
-      return false;
-    }
-  }
-
-  watchingWorksJson.data.viewer.works.nodes.push(work);
-  saveWatchingWorksJson();
-  return true;
-}
-
-function removeWatchingWorksJson(workAnnictId) {
-  var works = watchingWorksJson.data.viewer.works.nodes;
-  for (var i = 0; i < works.length; i++) {
-    if (works[i].annictId == workAnnictId) {
-      works.splice(i, 1);
-      saveWatchingWorksJson();
-      return true;
-    }
-  }
-  return false;
-}
-
-function loadSearchWorksJson() {
-  var item = localStorage.getItem('searchWorks');
-  if (item) {
-    searchWorksJson = JSON.parse(item);
-    return;
-  }
-
-  searchWorksJson = {
-    data: {
-      searchWorks: {
-        nodes: [],
-        pageInfo: {
-          hasPreviousPage: false,
-          hasNextPage: false
-        }
-      }
-    },
-    title: '',
-    version: version
-  };
-}
-
-function saveSearchWorksJson() {
-  searchWorksJson.version = version;
-
-  setTimeout(function() {
-    localStorage.setItem('searchWorks', JSON.stringify(searchWorksJson));
-  }, 0);
-}
-
-function clearSearchWorksJson() {
-  localStorage.removeItem('searchWorks');
-  loadSearchWorksJson();
-  saveSearchWorksJson();
-}
-
-function clearStorage() {
-  localStorage.clear();
-  sessionStorage.clear();
-}
-
-function alertMessage(message, type, delay) {
-  var alert = $('#alert');
-  var alertBg = alert.find('#alert-bg');
-  var oldBg = alertBg.data('bg');
-  var newBg = 'bg-' + type;
-  alertBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
-  alert.find('#alert-message').text(message);
-
-  alert.show('fast', function() {
-    setTimeout(function() {
-      alert.click();
-    }, delay ? delay : 2500);
-  });
-}
-
-
-$(function() {
-  $('#alert').click(function() {
-    $(this).hide('fast');
-  });
-});
-
-loadWatchingWorksJson();

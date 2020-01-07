@@ -1,92 +1,136 @@
-loadSearchWorksJson();
+var searchContent = new function() {
 
-function renderSearchWorks() {
+  var searchWorksJsonCache = new (
+    Object.setPrototypeOf(
+      $.extend(
+        function(key) {
+          JsonCache.call(this, key);
+        }.prototype,
+        {
+          getDefault: function() {
+            return {
+              data: {
+                searchWorks: {
+                  nodes: [],
+                  pageInfo: {
+                    hasPreviousPage: false,
+                    hasNextPage: false
+                  }
+                }
+              },
+              title: '',
+              version: version
+            };
+          }
+        }
+      ),
+      JsonCache.prototype
+    )
+  ).constructor('searchWorks');
 
-  $('#title').val(searchWorksJson.title);
+  var render = function() {
+    var searchWorksJson = searchWorksJsonCache.get();
 
-  var works = $('#works-template .works').clone(false, false);
-  works.empty();
-  $('#result-works').empty().append(works);
+    $('#title').val(searchWorksJson.title);
 
-  searchWorksJson.data.searchWorks.nodes.forEach(function(work) {
-    var workHeading = $('#works-template .work-heading').clone(true, true);
-    workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
+    var works = $('#works-template .works').clone(false, false);
+    works.empty();
+    $('#result-works').empty().append(works);
 
-    var href = 'https://annict.jp/works/' + work.annictId;
-    workHeading.find('.work-link').attr('href', href).text(work.title);
+    searchWorksJson.data.searchWorks.nodes.forEach(function(work) {
+      var workHeading = $('#works-template .work-heading').clone(true, true);
+      workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
 
-    workHeading.find('.work-status').val(work.viewerStatusState);
+      var href = 'https://annict.jp/works/' + work.annictId;
+      workHeading.find('.work-link').attr('href', href).text(work.title);
 
-    works.append(workHeading);
-  });
+      workHeading.find('.work-status').val(work.viewerStatusState);
 
-  $('#pager-prev').toggle(searchWorksJson.data.searchWorks.pageInfo.hasPreviousPage);
-  $('#pager-next').toggle(searchWorksJson.data.searchWorks.pageInfo.hasNextPage);
-}
+      works.append(workHeading);
+    });
 
-function searchWorks(before, after) {
-  var title = $('#title').val().trim();
-  api.searchWorks(
-    function(json) {
-      searchWorksJson = json;
-      searchWorksJson.title = title;
-      saveSearchWorksJson();
-      renderSearchWorks();
+    $('#pager-prev').toggle(searchWorksJson.data.searchWorks.pageInfo.hasPreviousPage);
+    $('#pager-next').toggle(searchWorksJson.data.searchWorks.pageInfo.hasNextPage);
+  };
 
-      if (json.data.searchWorks.nodes.length == 0) {
-        alertMessage('対象の作品が見つかりませんでした。', 'warning');
-      }
-    },
-    title, before, after
-  );
-}
+  var searchWorks = function(before, after) {
+    var title = $('#title').val().trim();
+    api.searchWorks(
+      function(json) {
+        json.title = title;
+        searchWorksJsonCache.set(json);
+        searchWorksJsonCache.save();
+        render();
+
+        if (json.data.searchWorks.nodes.length == 0) {
+          alertMessage('作品が見つかりませんでした。', 'warning');
+        }
+      },
+      title, before, after
+    );
+  };
+
+  var clear = function() {
+    searchWorksJsonCache.remove();
+    render();
+  };
+
+  var setupEvent = function() {
+    $('#searchForm').submit(function() {
+      searchWorks(null, null);
+      return false;
+    });
+
+    $('#search').click(function() {
+      $(this).blur();
+      $('#searchForm').submit();
+    });
+
+    $('#remove').click(function() {
+      $(this).blur();
+      clear();
+    });
+
+    $('#works-template .work-status').change(function() {
+      var workStatus = $(this);
+      var status = workStatus.val();
+      var id = workStatus.closest('.work-heading').data('id');
+
+      api.updateStatus(
+        function(json) {
+          var work = json.data.updateStatus.work;
+          if (status == 'WATCHING') {
+            watchingContent.addWork(work);
+          } else {
+            watchingContent.removeWork(work.annictId);
+          }
+          alertMessage('変更しました。', 'info');
+        },
+        id, status
+      );
+    });
+
+    $('#pager-prev a').click(function() {
+      $(this).blur();
+      $(window).scrollTop(0);
+      searchWorks(searchWorksJsonCache.get().data.searchWorks.pageInfo.startCursor, null);
+    });
+
+    $('#pager-next a').click(function() {
+      $(this).blur();
+      $(window).scrollTop(0);
+      searchWorks(null, searchWorksJsonCache.get().data.searchWorks.pageInfo.endCursor);
+    });
+  };
+
+  this.build = function() {
+    setupEvent();
+    render();
+  };
+
+  this.clear = clear;
+};
 
 $(function() {
-  $('#searchForm').submit(function() {
-    searchWorks(null, null);
-    return false;
-  });
-
-  $('#search').click(function() {
-    $(this).blur();
-    $('#searchForm').submit();
-  });
-
-  $('#remove').click(function() {
-    $(this).blur();
-    clearSearchWorksJson();
-    renderSearchWorks();
-  });
-
-  $('#works-template .work-status').change(function() {
-    var workStatus = $(this);
-    var status = workStatus.val();
-    var id = workStatus.closest('.work-heading').data('id');
-
-    api.updateStatus(
-      function(json) {
-        var work = json.data.updateStatus.work;
-        var render = (status == 'WATCHING') ? addWatchingWorksJson(work) : removeWatchingWorksJson(work.annictId);
-        if (render) {
-          renderWatchingWorks();
-        }
-        alertMessage('変更完了', 'info');
-      },
-      id, status
-    );
-  });
-
-  $('#pager-prev a').click(function() {
-    $(this).blur();
-    $(window).scrollTop(0);
-    searchWorks(searchWorksJson.data.searchWorks.pageInfo.startCursor, null);
-  });
-
-  $('#pager-next a').click(function() {
-    $(this).blur();
-    $(window).scrollTop(0);
-    searchWorks(null, searchWorksJson.data.searchWorks.pageInfo.endCursor);
-  });
-
-  renderSearchWorks();
+  searchContent.build();
 });
