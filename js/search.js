@@ -28,7 +28,7 @@ var searchContent = new function() {
     )
   ).constructor('searchWorks');
 
-  var renderSearchWorks = function() {
+  var render = function() {
     var searchWorksJson = searchWorksJsonCache.get();
 
     $('#title').val(searchWorksJson.title);
@@ -60,10 +60,10 @@ var searchContent = new function() {
         json.title = title;
         searchWorksJsonCache.set(json);
         searchWorksJsonCache.save();
-        renderSearchWorks();
+        render();
 
         if (json.data.searchWorks.nodes.length == 0) {
-          alertMessage('対象の作品が見つかりませんでした。', 'warning');
+          alertMessage('作品が見つかりませんでした。', 'warning');
         }
       },
       title, before, after
@@ -72,7 +72,7 @@ var searchContent = new function() {
 
   var clear = function() {
     searchWorksJsonCache.remove();
-    renderSearchWorks();
+    render();
   };
 
   var setupEvent = function() {
@@ -100,11 +100,11 @@ var searchContent = new function() {
         function(json) {
           var work = json.data.updateStatus.work;
           if (status == 'WATCHING') {
-            watchingContent.addWatchingWorksJson(work);
+            watchingContent.addWork(work);
           } else {
-            watchingContent.removeWatchingWorksJson(work.annictId);
+            watchingContent.removeWork(work.annictId);
           }
-          alertMessage('変更完了', 'info');
+          alertMessage('変更しました。', 'info');
         },
         id, status
       );
@@ -123,14 +123,14 @@ var searchContent = new function() {
     });
   };
 
-  this.initialize = function() {
+  this.build = function() {
     setupEvent();
-    renderSearchWorks();
+    render();
   };
 
   this.clear = clear;
 };
 
 $(function() {
-  searchContent.initialize();
+  searchContent.build();
 });

@@ -1,94 +1,8 @@
-var version = 1;
-
-var StorageCache = $.extend(
-  $.extend(
-    function(key) {
-      this.key = key;
-      this.useLocalStorage();
-    }.prototype,
-    {
-      get: function() {
-        return this.storage.getItem(this.key);
-      },
-
-      set: function(item) {
-        this.storage.setItem(this.key, item);
-      },
-
-      remove: function() {
-        this.storage.removeItem(this.key);
-      },
-
-      useLocalStorage: function() {
-        this.storage = localStorage;
-        return this;
-      },
-
-      useSessionStorage: function() {
-        this.storage = sessionStorage;
-        return this;
-      }
-    }
-  ).constructor,
-  {
-    clear: function() {
-      localStorage.clear();
-      sessionStorage.clear();
-    }
-  }
-);
-
-var JsonCache = Object.setPrototypeOf(
-  $.extend(
-    function(key) {
-      StorageCache.call(this, key);
-      this.load();
-    }.prototype,
-    {
-      get: function() {
-        return this.json;
-      },
-
-      set: function(json) {
-        this.json = json;
-      },
-
-      remove: function() {
-        StorageCache.prototype.remove.call(this);
-        this.json = this.getDefault();
-      },
-
-      load: function() {
-        var item = StorageCache.prototype.get.call(this);
-        if (item) {
-          try {
-              this.json = JSON.parse(item);
-              return;
-          } catch (e) {
-          }
-        }
-        this.json = this.getDefault();
-      },
-
-      save: function() {
-        this.json.version = version;
-        setTimeout(function() {
-          StorageCache.prototype.set.call(this, JSON.stringify(this.json));
-        }.bind(this), 0);
-      },
-
-      getDefault: function() {
-        return {};
-      }
-    }
-  ),
-  StorageCache.prototype
-).constructor;
-
 var api = new function() {
   var endpoint = 'https://api.annict.com/graphql';
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
+  var tokenCache = new StorageCache('token');
 
   var workFields
     = 'id '
@@ -254,53 +168,53 @@ var api = new function() {
     + '}'
   ;
 
-  var tokenCache = new StorageCache('token');
-
-  var postQuery = function (success, query, variables) {
-    var ajax = function(token, callback) {
-      var data = {
-        query: query.replace(spaceRegExp, ' ')
-      };
-
-      if (variables) {
-        data.variables = variables;
-      }
-
-      $.ajax({
-        url: endpoint,
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        headers: {
-          Authorization: 'bearer ' + token
-        },
-        data: JSON.stringify(data),
-        success: callback,
-        error: function(xhr) {
-          var message = '';
-          if (xhr.responseText) {
-              message = ': ';
-              try {
-                var json = JSON.parse(xhr.responseText);
-                if (json.message) {
-                  message += json.message;
-                }
-              } catch (e) {
-                message += xhr.responseText;
-              }
+  var ajaxError = function(xhr) {
+    var message = '';
+    if (xhr.responseText) {
+        message = ': ';
+        try {
+          var json = JSON.parse(xhr.responseText);
+          if (json.message) {
+            message += json.message;
           }
-          alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+        } catch (e) {
+          message += xhr.responseText;
         }
-      });
+    }
+    alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+  };
+
+  var postQuery = function(success, query, variables, token) {
+    var data = {
+      query: query.replace(spaceRegExp, ' ')
     };
 
+    if (variables) {
+      data.variables = variables;
+    }
+
+    $.ajax({
+      url: endpoint,
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      headers: {
+        Authorization: 'bearer ' + token
+      },
+      data: JSON.stringify(data),
+      success: success,
+      error: ajaxError
+    });
+  };
+
+  var request = function (success, query, variables) {
     var token = tokenCache.useLocalStorage().get();
     if (!token) {
       token = tokenCache.useSessionStorage().get();
     }
 
     if (token) {
-      ajax(token, success);
+      postQuery(success, query, variables, token);
       return;
     }
 
@@ -308,14 +222,17 @@ var api = new function() {
       var token = $('#token').val();
       if (token) {
         var storage = $('[name="storage"]:checked').val();
-        ajax(token, function(json) {
-          if (storage == 'session') {
-            tokenCache.useSessionStorage().set(token);
-          } else if (storage == 'local') {
-            tokenCache.useLocalStorage().set(token);
-          }
-          success(json);
-        });
+        postQuery(
+          function(json) {
+            if (storage == 'session') {
+              tokenCache.useSessionStorage().set(token);
+            } else if (storage == 'local') {
+              tokenCache.useLocalStorage().set(token);
+            }
+            success(json);
+          },
+          query, variables, token
+        );
       } else {
         alertMessage('アクセストークンを入力してください。', 'danger');
       }
@@ -330,7 +247,7 @@ var api = new function() {
       episodeAnnictIds: episodeAnnictIds,
       withEpisodes: (episodeAnnictIds.length > 0)
     };
-    postQuery(success, watchingWorksQuery, variables);
+    request(success, watchingWorksQuery, variables);
   };
 
   this.prevEpisode = function(success, id, skip) {
@@ -338,7 +255,7 @@ var api = new function() {
       id: id,
       skip: skip
     };
-    postQuery(success, prevEpisodeQuery, variables);
+    request(success, prevEpisodeQuery, variables);
   };
 
   this.nextEpisode = function(success, id, skip) {
@@ -346,7 +263,7 @@ var api = new function() {
       id: id,
       skip: skip
     };
-    postQuery(success, nextEpisodeQuery, variables);
+    request(success, nextEpisodeQuery, variables);
   };
 
   this.createReview = function(success, id, body, overall, animation, music, story, character, twitter, facebook) {
@@ -378,7 +295,7 @@ var api = new function() {
       variables.facebook = facebook;
     }
 
-    postQuery(success, createReviewQuery, variables);
+    request(success, createReviewQuery, variables);
   };
 
   this.createRecord = function(success, id, rating, comment, twitter, facebook) {
@@ -400,7 +317,7 @@ var api = new function() {
       variables.facebook = facebook;
     }
 
-    postQuery(success, createRecordQuery, variables);
+    request(success, createRecordQuery, variables);
   };
 
   this.updateStatus = function(success, id, status) {
@@ -408,7 +325,7 @@ var api = new function() {
       id: id,
       state: status
     };
-    postQuery(success, updateStatusQuery, variables);
+    request(success, updateStatusQuery, variables);
   };
 
   this.searchWorks = function(success, title, before, after) {
@@ -432,7 +349,7 @@ var api = new function() {
       variables.first = searchResults;
     }
 
-    postQuery(success, searchWorksQuery, variables);
+    request(success, searchWorksQuery, variables);
   };
 };
 
@@ -480,24 +397,3 @@ var TitleNormalizer = $.extend(
     }
   }
 ).constructor;
-
-function alertMessage(message, type, delay) {
-  var alert = $('#alert');
-  var alertBg = alert.find('#alert-bg');
-  var oldBg = alertBg.data('bg');
-  var newBg = 'bg-' + type;
-  alertBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
-  alert.find('#alert-message').text(message);
-
-  alert.show('fast', function() {
-    setTimeout(function() {
-      alert.click();
-    }, delay ? delay : 2500);
-  });
-}
-
-$(function() {
-  $('#alert').click(function() {
-    $(this).hide('fast');
-  });
-});

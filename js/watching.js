@@ -80,7 +80,7 @@ var watchingContent = new function() {
     return episodeBody;
   };
 
-  var groupList = [
+  var groups = [
     {title: 'あ', reg: /^[ぁ-お]/, works: []},
     {title: 'か', reg: /^[か-ご]/, works: []},
     {title: 'さ', reg: /^[さ-ぞ]/, works: []},
@@ -94,13 +94,13 @@ var watchingContent = new function() {
     {title: '他', reg: /^./, works: []}
   ];
 
-  var renderWatchingWorks = function() {
+  var render = function() {
 
     watchingWorksJsonCache.get().data.viewer.works.nodes.forEach(function(work) {
       var title = new TitleNormalizer(work);
-      for (var i = 0; i < groupList.length; i++) {
-        if (groupList[i].reg.test(title.getKana())) {
-          groupList[i].works.push(work);
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[i].reg.test(title.getKana())) {
+          groups[i].works.push(work);
           break;
         }
       }
@@ -108,7 +108,7 @@ var watchingContent = new function() {
 
     var watchingWorks = $('#watching-works').empty();
 
-    groupList.forEach(function(group) {
+    groups.forEach(function(group) {
       if (group.works.length > 0) {
         var groupContents = $('#group-template .group-heading, #group-template .group-body').clone(false, false);
         var worksContents = groupContents.find('.works');
@@ -243,7 +243,7 @@ var watchingContent = new function() {
       api.createReview(
         function(json) {
           /* json.data.createReview.review.work.title */
-          alertMessage('記録完了', 'info');
+          alertMessage('記録しました。', 'info');
         },
         id, body, overall, animation, music, story, character, twitter, facebook
       );
@@ -285,7 +285,7 @@ var watchingContent = new function() {
         function(json) {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
-          alertMessage('記録完了', 'info');
+          alertMessage('記録しました。', 'info');
         },
         id, rating, comment, twitter, facebook
       );
@@ -351,7 +351,7 @@ var watchingContent = new function() {
             groupBody.remove();
           }
 
-          alertMessage('変更完了', 'info');
+          alertMessage('変更しました。', 'info');
         },
         id, state
       );
@@ -373,45 +373,49 @@ var watchingContent = new function() {
 
     $('#update').click(function() {
       updateWatchingWorksJson(function() {
-        renderWatchingWorks();
-        alertMessage('更新完了', 'info');
+        render();
+        alertMessage('更新しました。', 'info');
       });
     });
 
     $('#clear').click(function() {
       StorageCache.clear();
-      watchingWorksJsonCache.remove();
-      renderWatchingWorks();
+      watchingContent.clear();
       searchContent.clear();
-      alertMessage('クリア完了', 'info');
+      alertMessage('クリアしました。', 'info');
     });
   };
 
-  this.initialize = function() {
+  this.clear = function() {
+    watchingWorksJsonCache.remove();
+    render();
+  };
+
+  this.build = function() {
     setupEvent($('#group-template'));
 
     if (watchingWorksJsonCache.get().version != version) {
       updateWatchingWorksJson(function(){
-        renderWatchingWorks();
+        render();
       });
     } else {
-      renderWatchingWorks();
+      render();
     }
   };
 
-  this.addWatchingWorksJson = function(work) {
+  this.addWork = function(work) {
     if (addWatchingWorksJson(work)) {
-      renderWatchingWorks();
+      render();
     }
   };
 
-  this.removeWatchingWorksJson = function(workAnnictId) {
+  this.removeWork = function(workAnnictId) {
     if (removeWatchingWorksJson(workAnnictId)) {
-      renderWatchingWorks();
+      render();
     }
   };
 };
 
 $(function() {
-  watchingContent.initialize();
+  watchingContent.build();
 });
