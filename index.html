@@ -8,14 +8,33 @@
     <link href="css/style.min.css" rel="stylesheet">
   </head>
   <body>
-    <nav id="alert" class="navbar navbar-default navbar-fixed-top" style="display: none;">
-      <div id="alert-bg" class="navbar-collapse">
+    <nav id="info" class="navbar navbar-default navbar-fixed-bottom" style="display: none;">
+      <div id="info-bg" class="navbar-collapse">
         <p class="navbar-text">
-          <strong id="alert-message"></strong>
+          <strong id="info-message"></strong>
         </p>
       </div>
     </nav>
-    <ul class="nav nav-tabs">
+    <nav id="header" class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+          <ul class="nav navbar-nav">
+            <li class="active"><a id="nav-watching" href="#watchingContent" data-toggle="tab">見てる</a></li>
+            <li><a id="nav-search" href="#searchContent" data-toggle="tab">検索</a></li>
+          </ul>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="O">他</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="W">わ</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="R">ら</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="Y">や</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="M">ま</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="H">は</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="N">な</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="T">た</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="S">さ</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="K">か</button>
+          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="A">あ</button>
+      </div>
+    </nav>
+    <ul class="template nav nav-tabs">
       <li class="active"><a href="#watchingContent" data-toggle="tab">見てる</a></li>
       <li><a href="#searchContent" data-toggle="tab">検索</a></li>
     </ul>
@@ -56,7 +75,7 @@
     </div>
     <div class="template">
       <div id="group-template">
-        <div class="group-heading panel-heading">
+        <div class="group-heading panel-heading" data-initial="">
           <h6 class="group-title panel-title"></h6>
         </div>
         <div class="group-body panel-body">
@@ -378,6 +397,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="js/service.min.js"></script>
     <script src="js/annict.min.js"></script>
+    <script src="js/header.min.js"></script>
     <script src="js/watching.min.js"></script>
     <script src="js/search.min.js"></script>
   </body>

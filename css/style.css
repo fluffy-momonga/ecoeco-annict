@@ -1,5 +1,6 @@
 body {
   font-size: small;
+  padding-top: 41px;
 }
 h6 {
   display: inline-block;
@@ -9,6 +10,24 @@ h6 {
 }
 .btn-default {
   color: #3c763d;
+}
+.navbar {
+  min-height: 40px !important;
+}
+.navbar-nav {
+  margin: 0;
+}
+.nav > li {
+  float: left;
+  display: inline-block;
+}
+.navbar-nav > li > a {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+.navbar-btn {
+  margin-top: 3px !important;
+  margin-bottom: 3px !important;
 }
 .group.panel {
   border-color: #449d44;
