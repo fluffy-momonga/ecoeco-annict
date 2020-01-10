@@ -46,6 +46,7 @@ var watchingContent = new function() {
 
   var twitterCache = new StorageCache('twitter');
   var facebookCache = new StorageCache('facebook');
+  var groupHeadingFirstTop = 0;
 
   var createWorkHeading = function(work) {
     var href = 'https://annict.jp/works/' + work.annictId;
@@ -246,7 +247,6 @@ var watchingContent = new function() {
 
       api.createReview(
         function(json) {
-          /* json.data.createReview.review.work.title */
           headerContent.inform('記録しました。', 'info');
         },
         id, body, overall, animation, music, story, character, twitter, facebook
@@ -351,8 +351,13 @@ var watchingContent = new function() {
 
           if (works.find('.work-heading').length == 0) {
             var groupBody = works.closest('.group-body');
-            groupBody.prev('.group-heading').remove();
+            var groupHeading = groupBody.prev('.group-heading');
+            var initial = groupHeading.data('initial');
+
+            groupHeading.remove();
             groupBody.remove();
+
+            headerContent.toggleInitial(initial, false);
           }
 
           headerContent.inform('変更しました。', 'info');
@@ -403,7 +408,12 @@ var watchingContent = new function() {
   };
 
   this.getGroupTop = function(initial) {
-    return $('#watching-works .group-heading[data-initial="' + initial + '"]').offset().top;
+    var watchingWorks = $('#watching-works');
+    if (!groupHeadingFirstTop) {
+      groupHeadingFirstTop = watchingWorks.find('.group-heading:first').offset().top;
+    }
+    var initialTop = watchingWorks.find('.group-heading[data-initial="' + initial + '"]').offset().top;
+    return initialTop - groupHeadingFirstTop;
   };
 
   this.clear = function() {

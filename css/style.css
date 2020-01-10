@@ -12,7 +12,10 @@ h6 {
   color: #3c763d;
 }
 .navbar {
-  min-height: 40px !important;
+  min-height: 40px;
+}
+.container-fluid {
+  padding-left: 0px;
 }
 .navbar-nav {
   margin: 0;
@@ -22,12 +25,12 @@ h6 {
   display: inline-block;
 }
 .navbar-nav > li > a {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .navbar-btn {
-  margin-top: 3px !important;
-  margin-bottom: 3px !important;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 .group.panel {
   border-color: #449d44;
