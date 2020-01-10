@@ -16,6 +16,7 @@ h6 {
 }
 .container-fluid {
   padding-left: 0px;
+  padding-right: 0px;
 }
 .navbar-nav {
   margin: 0;
@@ -29,8 +30,8 @@ h6 {
   padding-bottom: 10px;
 }
 .navbar-btn {
-  margin-top: 3px;
-  margin-bottom: 3px;
+  margin-top: 4px;
+  margin-bottom: 2px;
 }
 .group.panel {
   border-color: #449d44;
