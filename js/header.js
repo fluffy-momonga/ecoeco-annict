@@ -26,8 +26,12 @@ var headerContent = new function() {
     initials = $('#header [data-initial]');
 
     initials.click(function() {
+
+      $('#nav-watching').tab('show');
+
       var initial = $(this).data('initial');
       var groupTop = watchingContent.getGroupTop(initial);
+
       $(window).scrollTop(groupTop - headerHeight);
       $(this).blur();
     });
