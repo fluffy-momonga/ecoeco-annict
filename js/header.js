@@ -1,6 +1,5 @@
 var headerContent = new function() {
 
-  var headerHeight = 0;
   var initials = null;
 
   this.toggleInitial = function(initial, show) {
@@ -22,7 +21,6 @@ var headerContent = new function() {
   };
 
   this.build = function() {
-    headerHeight = $('#header').height();
     initials = $('#header [data-initial]');
 
     initials.click(function() {
@@ -32,7 +30,7 @@ var headerContent = new function() {
       var initial = $(this).data('initial');
       var groupTop = watchingContent.getGroupTop(initial);
 
-      $(window).scrollTop(groupTop - headerHeight);
+      $(window).scrollTop(groupTop);
       $(this).blur();
     });
 
