@@ -84,23 +84,3 @@ var JsonCache = Object.setPrototypeOf(
   ),
   StorageCache.prototype
 ).constructor;
-
-function alertMessage(message, type, delay) {
-  var alert = $('#alert');
-  var alertBg = alert.find('#alert-bg');
-  var oldBg = alertBg.data('bg');
-  var newBg = 'bg-' + type;
-
-  alert.finish();
-
-  alertBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
-  alert.find('#alert-message').text(message);
-
-  alert.show('fast').animate({opacity: 1}, delay ? delay : 3000).hide('fast');
-}
-
-$(function() {
-  $('#alert').click(function() {
-    $(this).finish();
-  });
-});

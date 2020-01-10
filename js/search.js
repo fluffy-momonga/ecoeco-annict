@@ -63,7 +63,7 @@ var searchContent = new function() {
         render();
 
         if (json.data.searchWorks.nodes.length == 0) {
-          alertMessage('作品が見つかりませんでした。', 'warning');
+          headerContent.inform('作品が見つかりませんでした。', 'warning');
         }
       },
       title, before, after
@@ -104,7 +104,7 @@ var searchContent = new function() {
           } else {
             watchingContent.removeWork(work.annictId);
           }
-          alertMessage('変更しました。', 'info');
+          headerContent.inform('変更しました。', 'info');
         },
         id, status
       );

@@ -47,7 +47,7 @@ var watchingContent = new function() {
   var twitterCache = new StorageCache('twitter');
   var facebookCache = new StorageCache('facebook');
 
-  var getWorkHeading = function(work) {
+  var createWorkHeading = function(work) {
     var href = 'https://annict.jp/works/' + work.annictId;
     var workHeading = $('#group-template .work-heading').clone(true, true);
     workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
@@ -55,7 +55,7 @@ var watchingContent = new function() {
     return workHeading;
   };
 
-  var getEpisodeBody = function(episode, work) {
+  var createEpisodeBody = function(episode, work) {
 
     var episodeBody = $('#group-template .episode-body').clone(true, true);
 
@@ -81,17 +81,17 @@ var watchingContent = new function() {
   };
 
   var groups = [
-    {title: 'あ', reg: /^[ぁ-お]/, works: []},
-    {title: 'か', reg: /^[か-ご]/, works: []},
-    {title: 'さ', reg: /^[さ-ぞ]/, works: []},
-    {title: 'た', reg: /^[た-ど]/, works: []},
-    {title: 'な', reg: /^[な-の]/, works: []},
-    {title: 'は', reg: /^[は-ぽ]/, works: []},
-    {title: 'ま', reg: /^[ま-も]/, works: []},
-    {title: 'や', reg: /^[ゃ-よ]/, works: []},
-    {title: 'ら', reg: /^[ら-ろ]/, works: []},
-    {title: 'わ', reg: /^[ゎ-ん]/, works: []},
-    {title: '他', reg: /^./, works: []}
+    {title: 'あ', initial: 'A', reg: /^[ぁ-お]/, works: []},
+    {title: 'か', initial: 'K', reg: /^[か-ご]/, works: []},
+    {title: 'さ', initial: 'S', reg: /^[さ-ぞ]/, works: []},
+    {title: 'た', initial: 'T', reg: /^[た-ど]/, works: []},
+    {title: 'な', initial: 'N', reg: /^[な-の]/, works: []},
+    {title: 'は', initial: 'H', reg: /^[は-ぽ]/, works: []},
+    {title: 'ま', initial: 'M', reg: /^[ま-も]/, works: []},
+    {title: 'や', initial: 'Y', reg: /^[ゃ-よ]/, works: []},
+    {title: 'ら', initial: 'R', reg: /^[ら-ろ]/, works: []},
+    {title: 'わ', initial: 'W', reg: /^[ゎ-ん]/, works: []},
+    {title: '他', initial: 'O', reg: /^./, works: []}
   ];
 
   var render = function() {
@@ -109,10 +109,14 @@ var watchingContent = new function() {
     var watchingWorks = $('#watching-works').empty();
 
     groups.forEach(function(group) {
-      if (group.works.length > 0) {
+      var show = (group.works.length > 0);
+      headerContent.toggleInitial(group.initial, show);
+
+      if (show) {
         var groupContents = $('#group-template .group-heading, #group-template .group-body').clone(false, false);
         var worksContents = groupContents.find('.works');
 
+        groupContents.filter('.group-heading').attr('data-initial', group.initial);
         groupContents.find('.group-title').text(group.title);
         worksContents.empty();
         watchingWorks.append(groupContents);
@@ -120,8 +124,8 @@ var watchingContent = new function() {
         while (group.works.length > 0) {
           var work = group.works.shift();
           var episode = (work.episodes.nodes.length > 0) ? work.episodes.nodes[0] : null;
-          var workHeading = getWorkHeading(work);
-          var episodeBody = getEpisodeBody(episode, work);
+          var workHeading = createWorkHeading(work);
+          var episodeBody = createEpisodeBody(episode, work);
           worksContents.append(workHeading, episodeBody);
         }
       }
@@ -138,7 +142,7 @@ var watchingContent = new function() {
         works[i].episodes.nodes[0] = episode;
         watchingWorksJsonCache.save();
 
-        var episodeBody = getEpisodeBody(episode, works[i]);
+        var episodeBody = createEpisodeBody(episode, works[i]);
         workContents.filter('.episode-body').remove();
         workContents.filter('.work-heading').after(episodeBody);
 
@@ -243,7 +247,7 @@ var watchingContent = new function() {
       api.createReview(
         function(json) {
           /* json.data.createReview.review.work.title */
-          alertMessage('記録しました。', 'info');
+          headerContent.inform('記録しました。', 'info');
         },
         id, body, overall, animation, music, story, character, twitter, facebook
       );
@@ -285,7 +289,7 @@ var watchingContent = new function() {
         function(json) {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
-          alertMessage('記録しました。', 'info');
+          headerContent.inform('記録しました。', 'info');
         },
         id, rating, comment, twitter, facebook
       );
@@ -351,7 +355,7 @@ var watchingContent = new function() {
             groupBody.remove();
           }
 
-          alertMessage('変更しました。', 'info');
+          headerContent.inform('変更しました。', 'info');
         },
         id, state
       );
@@ -374,7 +378,7 @@ var watchingContent = new function() {
     $('#update').click(function() {
       updateWatchingWorksJson(function() {
         render();
-        alertMessage('更新しました。', 'info');
+        headerContent.inform('更新しました。', 'info');
       });
     });
 
@@ -382,8 +386,24 @@ var watchingContent = new function() {
       StorageCache.clear();
       watchingContent.clear();
       searchContent.clear();
-      alertMessage('クリアしました。', 'info');
+      headerContent.inform('クリアしました。', 'info');
     });
+  };
+
+  this.addWork = function(work) {
+    if (addWatchingWorksJson(work)) {
+      render();
+    }
+  };
+
+  this.removeWork = function(workAnnictId) {
+    if (removeWatchingWorksJson(workAnnictId)) {
+      render();
+    }
+  };
+
+  this.getGroupTop = function(initial) {
+    return $('#watching-works .group-heading[data-initial="' + initial + '"]').offset().top;
   };
 
   this.clear = function() {
@@ -399,18 +419,6 @@ var watchingContent = new function() {
         render();
       });
     } else {
-      render();
-    }
-  };
-
-  this.addWork = function(work) {
-    if (addWatchingWorksJson(work)) {
-      render();
-    }
-  };
-
-  this.removeWork = function(workAnnictId) {
-    if (removeWatchingWorksJson(workAnnictId)) {
       render();
     }
   };

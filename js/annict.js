@@ -181,7 +181,7 @@ var api = new function() {
           message += xhr.responseText;
         }
     }
-    alertMessage('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+    headerContent.inform('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
   };
 
   var postQuery = function(success, query, variables, token) {
@@ -234,7 +234,7 @@ var api = new function() {
           query, variables, token
         );
       } else {
-        alertMessage('アクセストークンを入力してください。', 'danger');
+        headerContent.inform('アクセストークンを入力してください。', 'danger');
       }
       $('#token-modal').modal('hide');
     });
@@ -333,7 +333,7 @@ var api = new function() {
     var titles = title.split(spaceRegExp);
 
     if (titles.length == 0 || !titles[0]) {
-      alertMessage('タイトルを入力してください。', 'danger');
+      headerContent.inform('タイトルを入力してください。', 'danger');
       return;
     }
 
