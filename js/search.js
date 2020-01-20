@@ -57,7 +57,14 @@ var searchContent = new function() {
     var title = $('#title').val().trim();
     api.searchWorks(
       function(json) {
+        if (before) {
+          json.data.searchWorks.pageInfo.hasNextPage = true;
+        }
+        if (after) {
+          json.data.searchWorks.pageInfo.hasPreviousPage = true;
+        }
         json.title = title;
+
         searchWorksJsonCache.set(json);
         searchWorksJsonCache.save();
         render();
