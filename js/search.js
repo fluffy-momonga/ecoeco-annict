@@ -77,6 +77,18 @@ var searchContent = new function() {
     );
   };
 
+  var updateWorkStatus = function(workId, status) {
+    var works = searchWorksJsonCache.get().data.searchWorks.nodes;
+    for (var i = 0; i < works.length; i++) {
+      if (works[i].id == workId) {
+        works[i].viewerStatusState = status;
+        searchWorksJsonCache.save();
+        $('#result-works .work-heading[data-id="' + workId + '"] .work-status').val(status);
+        break;
+      }
+    }
+  };
+
   var clear = function() {
     searchWorksJsonCache.remove();
     render();
@@ -109,8 +121,9 @@ var searchContent = new function() {
           if (status == 'WATCHING') {
             watchingContent.addWork(work);
           } else {
-            watchingContent.removeWork(work.annictId);
+            watchingContent.removeWork(id);
           }
+          updateWorkStatus(id, status);
           headerContent.inform('変更しました。', 'info');
         },
         id, status
@@ -135,6 +148,7 @@ var searchContent = new function() {
     render();
   };
 
+  this.updateWorkStatus = updateWorkStatus;
   this.clear = clear;
 };
 

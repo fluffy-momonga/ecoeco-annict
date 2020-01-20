@@ -193,10 +193,10 @@ var watchingContent = new function() {
     return true;
   };
 
-  var removeWatchingWorksJson = function(workAnnictId) {
+  var removeWatchingWorksJson = function(workId) {
     var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
     for (var i = 0; i < works.length; i++) {
-      if (works[i].annictId == workAnnictId) {
+      if (works[i].id == workId) {
         works.splice(i, 1);
         watchingWorksJsonCache.save();
         return true;
@@ -342,8 +342,7 @@ var watchingContent = new function() {
 
       api.updateStatus(
         function(json) {
-          var workAnnictId = workHeading.data('annict-id');
-          removeWatchingWorksJson(workAnnictId);
+          removeWatchingWorksJson(id);
 
           var works = workHeading.closest('.works');
           workHeading.next('.episode-body').remove();
@@ -360,6 +359,7 @@ var watchingContent = new function() {
             headerContent.toggleInitial(initial, false);
           }
 
+          searchContent.updateWorkStatus(id, state);
           headerContent.inform('変更しました。', 'info');
         },
         id, state
@@ -401,8 +401,8 @@ var watchingContent = new function() {
     }
   };
 
-  this.removeWork = function(workAnnictId) {
-    if (removeWatchingWorksJson(workAnnictId)) {
+  this.removeWork = function(workId) {
+    if (removeWatchingWorksJson(workId)) {
       render();
     }
   };
