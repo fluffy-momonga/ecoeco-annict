@@ -68,9 +68,9 @@ var watchingContent = new function() {
 
     var href = 'https://annict.jp/works/' + work.annictId + '/episodes/' + episode.annictId;
     var record = episodeBody.find('.episode-record');
-    var link = episodeBody.find('.episode-link').attr('href', href);
-    var number = episodeBody.find('.episode-number').text(episode.numberText);
     var title = episodeBody.find('.episode-title').text(episode.title ? episode.title : '');
+    episodeBody.find('.episode-link').attr('href', href);
+    episodeBody.find('.episode-number').text(episode.numberText);
 
     if (episode.viewerDidTrack) {
       record.attr('disabled', 'disabled');
@@ -323,27 +323,31 @@ var watchingContent = new function() {
     });
   };
 
-  var setupUpdateStatusEvent = function(target, state, prefix) {
-    var workHeading;
-    var idPrefix = '#' + prefix;
-
+  var setupUpdateStatusEvent = function(target, state, name) {
     target.click(function() {
-      workHeading = $(this).closest('.work-heading');
+      var workHeading = $(this).closest('.work-heading');
+      var id = workHeading.data('id');
       var workTitle = workHeading.find('.work-link').text();
 
-      $(idPrefix + '-work-title').text(workTitle);
-      $(idPrefix + '-modal').modal();
+      $('#status-modal-title').text(workTitle);
+      $('#status-modal-name').text(name);
+      $('#status-modal-ok').data('id', id).data('state', state).text(name);
+      $('#status-modal').modal();
     });
+  };
 
-    $(idPrefix + '-modal-ok').click(function() {
-      $(idPrefix + '-modal').modal('hide');
+  var setupStatusModalEvent = function() {
+    $('#status-modal-ok').click(function() {
+      var id = $(this).data('id');
+      var state = $(this).data('state');
 
-      var id = workHeading.data('id');
+      $('#status-modal').modal('hide');
 
       api.updateStatus(
         function(json) {
           removeWatchingWorksJson(id);
 
+          var workHeading = $('#watching-works .work-heading[data-id="' + id + '"]');
           var works = workHeading.closest('.works');
           workHeading.next('.episode-body').remove();
           workHeading.remove();
@@ -369,8 +373,10 @@ var watchingContent = new function() {
 
   var setupEvent = function(template) {
 
-    setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', 'watched');
-    setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', 'stop');
+    setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', '見た');
+    setupUpdateStatusEvent(template.find('.work-hold'), 'ON_HOLD', '一時中断');
+    setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', '視聴中止');
+    setupStatusModalEvent();
 
     setupWorkReviewEvent(template.find('.work-review'));
     setupEpisodeRecordEvent(template.find('.episode-record'));
