@@ -77,13 +77,13 @@ var searchContent = new function() {
     );
   };
 
-  var updateWorkStatus = function(workId, status) {
+  var updateWorkStatus = function(workId, state) {
     var works = searchWorksJsonCache.get().data.searchWorks.nodes;
     for (var i = 0; i < works.length; i++) {
       if (works[i].id == workId) {
-        works[i].viewerStatusState = status;
+        works[i].viewerStatusState = state;
         searchWorksJsonCache.save();
-        $('#result-works .work-heading[data-id="' + workId + '"] .work-status').val(status);
+        $('#result-works .work-heading[data-id="' + workId + '"] .work-status').val(state);
         break;
       }
     }
@@ -112,21 +112,21 @@ var searchContent = new function() {
 
     $('#works-template .work-status').change(function() {
       var workStatus = $(this);
-      var status = workStatus.val();
+      var state = workStatus.val();
       var id = workStatus.closest('.work-heading').data('id');
 
       api.updateStatus(
         function(json) {
           var work = json.data.updateStatus.work;
-          if (status == 'WATCHING') {
+          if (state == 'WATCHING') {
             watchingContent.addWork(work);
           } else {
             watchingContent.removeWork(id);
           }
-          updateWorkStatus(id, status);
+          updateWorkStatus(id, state);
           headerContent.inform('変更しました。', 'info');
         },
-        id, status
+        id, state
       );
     });
 

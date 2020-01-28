@@ -83,6 +83,7 @@
             <div class="work-heading panel-heading" data-id="" data-annict-id="">
               <div class="btn-group btn-group-xs">
                 <button type="button" class="work-watched btn btn-success">見た</button>
+                <button type="button" class="work-hold btn btn-success">中断</button>
                 <button type="button" class="work-stop btn btn-success">中止</button>
               </div>
               <div class="btn-group btn-group-xs">
@@ -355,40 +356,21 @@
         </div>
       </div>
     </div>
-    <div class="modal" id="watched-modal" tabindex="-1">
+    <div class="modal" id="status-modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-            <h4 id="watched-work-title" class="modal-title"></h4>
+            <h4 id="status-modal-title" class="modal-title"></h4>
           </div>
           <div class="modal-body">
             <p>
-              ステータスを「見た」に変更しますか？
+              ステータスを「<span id="status-modal-name"></span>」に変更しますか？
             </p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-            <button type="button" class="btn btn-success" id="watched-modal-ok">見た</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="stop-modal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-            <h4 id="stop-work-title" class="modal-title"></h4>
-          </div>
-          <div class="modal-body">
-            <p>
-              ステータスを「視聴中止」に変更しますか？
-            </p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-            <button type="button" class="btn btn-success" id="stop-modal-ok">視聴中止</button>
+            <button type="button" class="btn btn-success" id="status-modal-ok" data-id="" data-state=""></button>
           </div>
         </div>
       </div>

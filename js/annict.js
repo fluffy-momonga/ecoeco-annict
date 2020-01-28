@@ -242,6 +242,8 @@ var api = new function() {
     $('#token-modal').modal();
   };
 
+  this.request = request;
+
   this.watchingWorks = function(success, episodeAnnictIds) {
     var variables = {
       episodeAnnictIds: episodeAnnictIds,
@@ -320,10 +322,10 @@ var api = new function() {
     request(success, createRecordQuery, variables);
   };
 
-  this.updateStatus = function(success, id, status) {
+  this.updateStatus = function(success, id, state) {
     var variables = {
       id: id,
-      state: status
+      state: state
     };
     request(success, updateStatusQuery, variables);
   };
