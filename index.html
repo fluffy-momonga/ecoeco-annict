@@ -21,17 +21,17 @@
             <li class="active"><a id="nav-watching" href="#watchingContent" data-toggle="tab">見てる</a></li>
             <li><a id="nav-search" href="#searchContent" data-toggle="tab">検索</a></li>
           </ul>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="O">他</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="W">わ</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="R">ら</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="Y">や</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="M">ま</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="H">は</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="N">な</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="T">た</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="S">さ</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="K">か</button>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" data-initial="A">あ</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="O">他</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="W">わ</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="R">ら</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="Y">や</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="M">ま</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="H">は</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="N">な</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="T">た</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="S">さ</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="K">か</button>
+          <button type="button" class="btn btn-default" style="display: none;" data-initial="A">あ</button>
       </div>
     </nav>
     <ul class="template nav nav-tabs">
@@ -134,6 +134,23 @@
           </div>
         </div>
       </div>
+      <div id="rating-template">
+        <label class="btn btn-success active">
+          <input type="radio" name="" autocomplete="off" value="" checked>未評価
+        </label>
+        <label class="btn btn-success">
+          <input type="radio" name="" autocomplete="off" value="BAD">良くない
+        </label>
+        <label class="btn btn-success">
+          <input type="radio" name="" autocomplete="off" value="AVERAGE">普通
+        </label>
+        <label class="btn btn-success">
+          <input type="radio" name="" autocomplete="off" value="GOOD">良い
+        </label>
+        <label class="btn btn-success">
+          <input type="radio" name="" autocomplete="off" value="GREAT">とても良い
+        </label>
+      </div>
     </div>
     <div class="modal" id="token-modal" tabindex="-1">
       <div class="modal-dialog">
@@ -184,22 +201,7 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <div class="btn-group-xs" data-toggle="buttons">
-                <label class="btn btn-success active">
-                  <input type="radio" name="record-rating" autocomplete="off" value="" checked>未評価
-                </label>
-                <label class="btn btn-success">
-                  <input type="radio" name="record-rating" autocomplete="off" value="BAD">良くない
-                </label>
-                <label class="btn btn-success">
-                  <input type="radio" name="record-rating" autocomplete="off" value="AVERAGE">普通
-                </label>
-                <label class="btn btn-success">
-                  <input type="radio" name="record-rating" autocomplete="off" value="GOOD">良い
-                </label>
-                <label class="btn btn-success">
-                  <input type="radio" name="record-rating" autocomplete="off" value="GREAT">とても良い
-                </label>
+              <div class="rating btn-group-xs" data-toggle="buttons" data-name="record-rating">
               </div>
             </div>
             <div class="form-group has-success">
@@ -233,107 +235,27 @@
               <p class="row">
                 <span class="col-xs-6">
                   映像<br>
-                  <span class="btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                      <input type="radio" name="review-rating-animation" autocomplete="off" value="" checked>未評価
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-animation" autocomplete="off" value="BAD">良くない
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-animation" autocomplete="off" value="AVERAGE">普通
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-animation" autocomplete="off" value="GOOD">良い
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-animation" autocomplete="off" value="GREAT">とても良い
-                    </label>
-                  </span>
+                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-animation"></span>
                 </span>
                 <span class="col-xs-6">
                   音楽<br>
-                  <span class="btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                      <input type="radio" name="review-rating-music" autocomplete="off" value="" checked>未評価
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-music" autocomplete="off" value="BAD">良くない
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-music" autocomplete="off" value="AVERAGE">普通
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-music" autocomplete="off" value="GOOD">良い
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-music" autocomplete="off" value="GREAT">とても良い
-                    </label>
-                  </span>
+                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-music"></span>
                 </span>
               </p>
               <p class="row">
                 <span class="col-xs-6">
                   ストーリー<br>
-                  <span class="btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                      <input type="radio" name="review-rating-story" autocomplete="off" value="" checked>未評価
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-story" autocomplete="off" value="BAD">良くない
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-story" autocomplete="off" value="AVERAGE">普通
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-story" autocomplete="off" value="GOOD">良い
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-story" autocomplete="off" value="GREAT">とても良い
-                    </label>
-                  </span>
+                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-story"></span>
                 </span>
                 <span class="col-xs-6">
                   キャラクター<br>
-                  <span class="btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                      <input type="radio" name="review-rating-character" autocomplete="off" value="" checked>未評価
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-character" autocomplete="off" value="BAD">良くない
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-character" autocomplete="off" value="AVERAGE">普通
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-character" autocomplete="off" value="GOOD">良い
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-character" autocomplete="off" value="GREAT">とても良い
-                    </label>
-                  </span>
+                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-character"></span>
                 </span>
               </p>
               <p class="row">
                 <span class="col-xs-12">
                   全体<br>
-                  <span class="btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                      <input type="radio" name="review-rating-overall" autocomplete="off" value="" checked>未評価
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-overall" autocomplete="off" value="BAD">良くない
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-overall" autocomplete="off" value="AVERAGE">普通
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-overall" autocomplete="off" value="GOOD">良い
-                    </label>
-                    <label class="btn btn-success">
-                      <input type="radio" name="review-rating-overall" autocomplete="off" value="GREAT">とても良い
-                    </label>
-                  </span>
+                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-overall"></span>
                 </span>
               </p>
             </div>
