@@ -401,6 +401,15 @@ var watchingContent = new function() {
     });
   };
 
+  var setupRating = function() {
+    var rating = $('#rating-template').children().clone(false, false);
+
+    $('.rating').append(rating).each(function() {
+      var name = $(this).data('name');
+      $(this).find('input').attr('name', name);
+    });
+  };
+
   this.addWork = function(work) {
     if (addWatchingWorksJson(work)) {
       render();
@@ -429,6 +438,7 @@ var watchingContent = new function() {
 
   this.build = function() {
     setupEvent($('#group-template'));
+    setupRating();
 
     if (watchingWorksJsonCache.get().version != version) {
       updateWatchingWorksJson(function(){

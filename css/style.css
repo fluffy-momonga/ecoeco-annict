@@ -29,9 +29,12 @@ h6 {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-.navbar-btn {
+.navbar-btn,
+#header .btn {
   margin-top: 4px;
   margin-bottom: 2px;
+  margin-right: 0;
+  float: right!important;
 }
 .group.panel {
   border-color: #449d44;
@@ -73,4 +76,7 @@ body a:focus, body a:hover {
 }
 #result-works .work-heading:nth-child(even) {
     background-color: #fff;
+}
+.rating label {
+  margin-right: 3px;
 }
