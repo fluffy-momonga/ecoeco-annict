@@ -49,7 +49,7 @@ var watchingContent = new function() {
   var groupHeadingFirstTop = 0;
 
   var createWorkHeading = function(work) {
-    var href = 'https://annict.jp/works/' + work.annictId;
+    var href = annict.makeWorkPageUrl(work.annictId);
     var workHeading = $('#group-template .work-heading').clone(true, true);
     workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
     workHeading.find('.work-link').attr('href', href).text(work.title);
@@ -66,7 +66,7 @@ var watchingContent = new function() {
 
     episodeBody.removeData().attr('data-id', episode.id).attr('data-annict-id', episode.annictId);
 
-    var href = 'https://annict.jp/works/' + work.annictId + '/episodes/' + episode.annictId;
+    var href = annict.makeEpisodePageUrl(work.annictId, episode.annictId);
     var record = episodeBody.find('.episode-record');
     var title = episodeBody.find('.episode-title').text(episode.title ? episode.title : '');
     episodeBody.find('.episode-link').attr('href', href);
@@ -153,7 +153,7 @@ var watchingContent = new function() {
   };
 
   var updateWatchingWorksJson = function(callback) {
-    api.watchingWorks(
+    annict.watchingWorks(
       function(json) {
         if (json.data.searchEpisodes) {
           var works = json.data.viewer.works.nodes;
@@ -245,7 +245,7 @@ var watchingContent = new function() {
 
       $('#review-modal').modal('hide');
 
-      api.createReview(
+      annict.createReview(
         function(json) {
           headerContent.inform('記録しました。', 'info');
         },
@@ -285,7 +285,7 @@ var watchingContent = new function() {
 
       $('#record-modal').modal('hide');
 
-      api.createRecord(
+      annict.createRecord(
         function(json) {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
@@ -343,7 +343,7 @@ var watchingContent = new function() {
 
       $('#status-modal').modal('hide');
 
-      api.updateStatus(
+      annict.updateStatus(
         function(json) {
           removeWatchingWorksJson(id);
 
@@ -381,10 +381,10 @@ var watchingContent = new function() {
     setupWorkReviewEvent(template.find('.work-review'));
     setupEpisodeRecordEvent(template.find('.episode-record'));
 
-    setupEpisodeNextPrevEvent(template.find('.episode-skip-prev'), api.prevEpisode, 'prevEpisode', true);
-    setupEpisodeNextPrevEvent(template.find('.episode-prev'), api.prevEpisode, 'prevEpisode', false);
-    setupEpisodeNextPrevEvent(template.find('.episode-next'), api.nextEpisode, 'nextEpisode', false);
-    setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), api.nextEpisode, 'nextEpisode', true);
+    setupEpisodeNextPrevEvent(template.find('.episode-skip-prev'), annict.prevEpisode, 'prevEpisode', true);
+    setupEpisodeNextPrevEvent(template.find('.episode-prev'), annict.prevEpisode, 'prevEpisode', false);
+    setupEpisodeNextPrevEvent(template.find('.episode-next'), annict.nextEpisode, 'nextEpisode', false);
+    setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), annict.nextEpisode, 'nextEpisode', true);
 
     $('#update').click(function() {
       updateWatchingWorksJson(function() {

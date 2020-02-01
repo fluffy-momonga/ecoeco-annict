@@ -41,7 +41,7 @@ var searchContent = new function() {
       var workHeading = $('#works-template .work-heading').clone(true, true);
       workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
 
-      var href = 'https://annict.jp/works/' + work.annictId;
+      var href = annict.makeWorkPageUrl(work.annictId);
       workHeading.find('.work-link').attr('href', href).text(work.title);
 
       workHeading.find('.work-status').val(work.viewerStatusState);
@@ -55,7 +55,7 @@ var searchContent = new function() {
 
   var searchWorks = function(before, after) {
     var title = $('#title').val().trim();
-    api.searchWorks(
+    annict.searchWorks(
       function(json) {
         if (before) {
           json.data.searchWorks.pageInfo.hasNextPage = true;
@@ -115,7 +115,7 @@ var searchContent = new function() {
       var state = workStatus.val();
       var id = workStatus.closest('.work-heading').data('id');
 
-      api.updateStatus(
+      annict.updateStatus(
         function(json) {
           var work = json.data.updateStatus.work;
           if (state == 'WATCHING') {
