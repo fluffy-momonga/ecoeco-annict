@@ -21,7 +21,16 @@ var headerContent = new function() {
   };
 
   this.build = function() {
-    initials = $('#header [data-initial]');
+    var initialTemplate = $('#initial-template > *');
+    var headerInitial = $('#header-initial');
+
+    watchingContent.getGroups().forEach(function(group) {
+      var initial = initialTemplate.clone(false, false);
+      initial.attr('data-initial', group.initial).text(group.title);
+      headerInitial.append(initial);
+    });
+
+    initials = headerInitial.children();
 
     initials.click(function() {
 
@@ -37,6 +46,10 @@ var headerContent = new function() {
     $('#info').click(function() {
       $(this).finish();
     });
+
+    setTimeout(function() {
+      $('#header-initial').show();
+    }, 0);
   };
 };
 

@@ -1,4 +1,4 @@
-var api = new function() {
+var annict = new function() {
   var endpoint = 'https://api.annict.com/graphql';
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
@@ -168,6 +168,14 @@ var api = new function() {
     + '}'
   ;
 
+  var makeWorkPageUrl = function(workAnnictId) {
+    return 'https://annict.jp/works/' + workAnnictId;
+  };
+
+  var makeEpisodePageUrl = function(workAnnictId, episodeAnnictId) {
+    return 'https://annict.jp/works/' + workAnnictId + '/episodes/' + episodeAnnictId;
+  };
+
   var ajaxError = function(xhr) {
     var message = '';
     if (xhr.responseText) {
@@ -241,8 +249,6 @@ var api = new function() {
 
     $('#token-modal').modal();
   };
-
-  this.request = request;
 
   this.watchingWorks = function(success, episodeAnnictIds) {
     var variables = {
@@ -353,6 +359,10 @@ var api = new function() {
 
     request(success, searchWorksQuery, variables);
   };
+
+  this.request = request;
+  this.makeWorkPageUrl = makeWorkPageUrl;
+  this.makeEpisodePageUrl = makeEpisodePageUrl;
 };
 
 var TitleNormalizer = $.extend(
