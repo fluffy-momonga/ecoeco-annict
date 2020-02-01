@@ -29,12 +29,14 @@ h6 {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+#header-initial {
+  float: right!important;
+}
 .navbar-btn,
 #header .btn {
   margin-top: 4px;
   margin-bottom: 2px;
   margin-right: 0;
-  float: right!important;
 }
 .group.panel {
   border-color: #449d44;

@@ -402,7 +402,7 @@ var watchingContent = new function() {
   };
 
   var setupRating = function() {
-    var rating = $('#rating-template').children().clone(false, false);
+    var rating = $('#rating-template > *').clone(false, false);
 
     $('.rating').append(rating).each(function() {
       var name = $(this).data('name');
@@ -420,6 +420,10 @@ var watchingContent = new function() {
     if (removeWatchingWorksJson(workId)) {
       render();
     }
+  };
+
+  this.getGroups = function() {
+    return groups;
   };
 
   this.getGroupTop = function(initial) {

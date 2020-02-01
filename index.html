@@ -21,17 +21,7 @@
             <li class="active"><a id="nav-watching" href="#watchingContent" data-toggle="tab">見てる</a></li>
             <li><a id="nav-search" href="#searchContent" data-toggle="tab">検索</a></li>
           </ul>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="O">他</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="W">わ</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="R">ら</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="Y">や</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="M">ま</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="H">は</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="N">な</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="T">た</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="S">さ</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="K">か</button>
-          <button type="button" class="btn btn-default" style="display: none;" data-initial="A">あ</button>
+          <span id="header-initial" style="display: none;"></span>
       </div>
     </nav>
     <ul class="template nav nav-tabs">
@@ -74,6 +64,9 @@
       </div>
     </div>
     <div class="template">
+      <div id="initial-template">
+        <button type="button" class="btn btn-default" data-initial=""></button>
+      </div>
       <div id="group-template">
         <div class="group-heading panel-heading" data-initial="">
           <h6 class="group-title panel-title"></h6>
