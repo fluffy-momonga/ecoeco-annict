@@ -46,10 +46,6 @@ var headerContent = new function() {
     $('#info').click(function() {
       $(this).finish();
     });
-
-    setTimeout(function() {
-      $('#header-initial').show();
-    }, 0);
   };
 };
 
