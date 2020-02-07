@@ -70,7 +70,7 @@ var watchingContent = new function() {
     var record = episodeBody.find('.episode-record');
     var title = episodeBody.find('.episode-title').text(episode.title ? episode.title : '');
     episodeBody.find('.episode-link').attr('href', href);
-    episodeBody.find('.episode-number').text(episode.numberText);
+    episodeBody.find('.episode-number').text(episode.numberText ? episode.numberText : '--');
 
     if (episode.viewerDidTrack) {
       record.attr('disabled', 'disabled');
