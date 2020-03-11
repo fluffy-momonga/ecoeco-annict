@@ -18,26 +18,22 @@
     <nav id="header" class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
           <ul class="nav navbar-nav">
-            <li class="active"><a id="nav-watching" href="#watchingContent" data-toggle="tab">見てる</a></li>
-            <li><a id="nav-search" href="#searchContent" data-toggle="tab">検索</a></li>
+            <li class="active"><a id="nav-watching" href="#watching-content" data-toggle="tab">見てる</a></li>
+            <li><a id="nav-search" href="#search-content" data-toggle="tab">検索</a></li>
           </ul>
           <span id="header-initial"></span>
       </div>
     </nav>
-    <ul class="template nav nav-tabs">
-      <li class="active"><a href="#watchingContent" data-toggle="tab">見てる</a></li>
-      <li><a href="#searchContent" data-toggle="tab">検索</a></li>
-    </ul>
     <div class="tab-content">
-      <div class="tab-pane active" id="watchingContent">
+      <div class="tab-pane active" id="watching-content">
         <div id="watching-works" class="group panel panel-primary"></div>
         <p>
           <button type="button" id="update" class="btn btn-default btn-sm">見てる作品を取得してキャッシュを更新</button>
           <button type="button" id="clear" class="btn btn-default btn-sm">全てのキャッシュをクリア</button>
         </p>
       </div>
-      <div class="tab-pane" id="searchContent">
-        <form id="searchForm">
+      <div class="tab-pane" id="search-content">
+        <form id="search-form">
           <div class="input-group input-group-sm has-success">
             <span class="input-group-btn">
               <button type="button" id="search" class="btn btn-default">
@@ -52,7 +48,7 @@
             </span>
           </div>
         </form>
-        <form id="worksForm" class="form-inline">
+        <form id="works-form" class="form-inline">
           <div id="result-works"></div>
         </form>
         <nav>

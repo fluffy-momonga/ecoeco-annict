@@ -95,14 +95,14 @@ var searchContent = new function() {
   };
 
   var setupEvent = function() {
-    $('#searchForm').submit(function() {
+    $('#search-form').submit(function() {
       searchWorks(null, null);
       return false;
     });
 
     $('#search').click(function() {
       $(this).blur();
-      $('#searchForm').submit();
+      $('#search-form').submit();
     });
 
     $('#remove').click(function() {
