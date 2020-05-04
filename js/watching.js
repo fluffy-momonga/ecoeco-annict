@@ -219,14 +219,22 @@ var watchingContent = new function() {
   var setupWorkReviewEvent = function(target) {
     var id;
 
+    var clearReview = function() {
+      $('[name^="review-rating-"][value=""]').click();
+      $('#review-body').val('');
+    };
+
     target.click(function() {
       var workHeading = $(this).closest('.work-heading');
       var workTitle = workHeading.find('.work-link').text();
-      id = workHeading.data('id');
+      var dataId = workHeading.data('id');
+
+      if (id != dataId) {
+        clearReview();
+        id = dataId;
+      }
 
       $('#review-work-title').text(workTitle);
-      $('[name^="review-rating-"][value=""]').click();
-      $('#review-body').val('');
       loadChecked($('#review-twitter'), twitterCache);
       loadChecked($('#review-facebook'), facebookCache);
 
@@ -247,6 +255,7 @@ var watchingContent = new function() {
 
       annict.createReview(
         function(json) {
+          clearReview();
           headerContent.inform('記録しました。', 'info');
         },
         id, body, overall, animation, music, story, character, twitter, facebook
@@ -258,9 +267,19 @@ var watchingContent = new function() {
     var workContents;
     var id;
 
+    var clearRecord = function() {
+      $('[name="record-rating"][value=""]').click();
+      $('#record-comment').val('');
+    };
+
     target.click(function() {
       workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
-      id = workContents.filter('.episode-body').data('id');
+      var dataId = workContents.filter('.episode-body').data('id');
+
+      if (id != dataId) {
+        clearRecord();
+        id = dataId;
+      }
 
       var workTitle = workContents.find('.work-link').text();
       var episodeNumber = workContents.find('.episode-number').text();
@@ -269,8 +288,6 @@ var watchingContent = new function() {
       $('#record-work-title').text(workTitle);
       $('#record-episode-number').text(episodeNumber);
       $('#record-episode-title').text(episodeTitle);
-      $('[name="record-rating"][value=""]').click();
-      $('#record-comment').val('');
       loadChecked($('#record-twitter'), twitterCache);
       loadChecked($('#record-facebook'), facebookCache);
 
@@ -289,6 +306,7 @@ var watchingContent = new function() {
         function(json) {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
+          clearRecord();
           headerContent.inform('記録しました。', 'info');
         },
         id, rating, comment, twitter, facebook
