@@ -379,7 +379,7 @@ var TitleNormalizer = $.extend(
       if (!this.work.titleKana) {
         this.work.titleKana = this.work.title.replace(this.katakanaRegExp, this.toHiragana);
       }
-      this.work.titleKana = this.work.titleKana.replace(this.altRegExp, this.alternate);
+      this.work.titleKana = this.work.titleKana.replace(this.altRegExp, this.alternate.bind(this));
     },
 
     toHiragana: function(target) {
