@@ -15,7 +15,8 @@ cd ..
 cd js
 uglifyjs service.js -m -c --source-map -o service.min.js
 uglifyjs annict.js -m -c reduce_vars=false --source-map -o annict.min.js
-uglifyjs header.js -m -c reduce_vars=false --source-map -o header.min.js
+uglifyjs dialog.js -m -c --source-map -o dialog.min.js
+uglifyjs header.js -m -c --source-map -o header.min.js
 uglifyjs watching.js -m -c --source-map -o watching.min.js
 uglifyjs search.js -m -c --source-map -o search.min.js
 cd ..

@@ -63,7 +63,7 @@
       <div id="initial-template">
         <button type="button" class="btn btn-default" data-initial="" style="display: none;"></button>
       </div>
-      <div id="group-template">
+      <div id="watching-template">
         <div class="group-heading panel-heading" data-initial="">
           <h6 class="group-title panel-title"></h6>
         </div>
@@ -104,7 +104,7 @@
           </div>
         </div>
       </div>
-      <div id="works-template">
+      <div id="search-template">
         <div class="works panel panel-success">
           <div class="work-heading panel-heading" data-id="" data-annict-id="">
             <div class="form-group has-success">
@@ -116,6 +116,9 @@
                 <option value="ON_HOLD">一時中断</option>
                 <option value="STOP_WATCHING">視聴中止</option>
               </select>
+            </div>
+            <div class="btn-group btn-group-xs">
+              <button type="button" class="work-review btn btn-success">記録</button>
             </div>
             <h6 class="work-title panel-title">
               <a class="work-link" target="_blank" href=""></a>
@@ -280,7 +283,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-            <button type="button" class="btn btn-success" id="status-modal-ok" data-id="" data-state=""></button>
+            <button type="button" class="btn btn-success" id="status-modal-ok"></button>
           </div>
         </div>
       </div>
@@ -289,6 +292,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="js/service.min.js"></script>
     <script src="js/annict.min.js"></script>
+    <script src="js/dialog.min.js"></script>
     <script src="js/header.min.js"></script>
     <script src="js/watching.min.js"></script>
     <script src="js/search.min.js"></script>

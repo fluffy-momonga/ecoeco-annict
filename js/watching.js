@@ -44,13 +44,12 @@ var watchingContent = new function() {
     )
   ).constructor('watchingWorks');
 
-  var twitterCache = new StorageCache('twitter');
-  var facebookCache = new StorageCache('facebook');
   var groupHeadingFirstTop = 0;
+  var template = null;
 
   var createWorkHeading = function(work) {
     var href = annict.makeWorkPageUrl(work.annictId);
-    var workHeading = $('#group-template .work-heading').clone(true, true);
+    var workHeading = template.find('.work-heading').clone(true, true);
     workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
     workHeading.find('.work-link').attr('href', href).text(work.title);
     return workHeading;
@@ -58,7 +57,7 @@ var watchingContent = new function() {
 
   var createEpisodeBody = function(episode, work) {
 
-    var episodeBody = $('#group-template .episode-body').clone(true, true);
+    var episodeBody = template.find('.episode-body').clone(true, true);
 
     if (!episode) {
       return episodeBody.empty();
@@ -114,7 +113,7 @@ var watchingContent = new function() {
       headerContent.toggleInitial(group.initial, show);
 
       if (show) {
-        var groupContents = $('#group-template .group-heading, #group-template .group-body').clone(false, false);
+        var groupContents = template.find('.group-heading, .group-body').clone(false, false);
         var worksContents = groupContents.find('.works');
 
         groupContents.filter('.group-heading').attr('data-initial', group.initial);
@@ -205,111 +204,53 @@ var watchingContent = new function() {
     return false;
   };
 
-  var loadChecked = function(target, cache) {
-    var value = cache.get();
-    target.prop('checked', value == 'true');
-  };
+  var removeWork = function(workId) {
 
-  var saveChecked = function(target, cache) {
-    var value = target.prop('checked');
-    cache.set(value);
-    return value;
+    removeWatchingWorksJson(workId);
+
+    var workHeading = $('#watching-works .work-heading[data-id="' + workId + '"]');
+
+    if (workHeading.length != 0) {
+      var works = workHeading.closest('.works');
+      workHeading.next('.episode-body').remove();
+      workHeading.remove();
+
+      if (works.find('.work-heading').length == 0) {
+        var groupBody = works.closest('.group-body');
+        var groupHeading = groupBody.prev('.group-heading');
+        var initial = groupHeading.data('initial');
+
+        groupHeading.remove();
+        groupBody.remove();
+
+        headerContent.toggleInitial(initial, false);
+      }
+    }
   };
 
   var setupWorkReviewEvent = function(target) {
-    var id;
-
-    var clearReview = function() {
-      $('[name^="review-rating-"][value=""]').click();
-      $('#review-body').val('');
-    };
-
     target.click(function() {
       var workHeading = $(this).closest('.work-heading');
       var workTitle = workHeading.find('.work-link').text();
-      var dataId = workHeading.data('id');
-
-      if (id != dataId) {
-        clearReview();
-        id = dataId;
-      }
-
-      $('#review-work-title').text(workTitle);
-      loadChecked($('#review-twitter'), twitterCache);
-      loadChecked($('#review-facebook'), facebookCache);
-
-      $('#review-modal').modal();
-    });
-
-    $('#review-modal-ok').click(function() {
-      var overall = $('[name="review-rating-overall"]:checked').val();
-      var animation = $('[name="review-rating-animation"]:checked').val();
-      var music = $('[name="review-rating-music"]:checked').val();
-      var story = $('[name="review-rating-story"]:checked').val();
-      var character = $('[name="review-rating-character"]:checked').val();
-      var body = $('#review-body').val();
-      var twitter = saveChecked($('#review-twitter'), twitterCache);
-      var facebook = saveChecked($('#review-facebook'), facebookCache);
-
-      $('#review-modal').modal('hide');
-
-      annict.createReview(
-        function(json) {
-          clearReview();
-          headerContent.inform('記録しました。', 'info');
-        },
-        id, body, overall, animation, music, story, character, twitter, facebook
-      );
+      var workId = workHeading.data('id');
+      dialogContent.createReviewDialog.display(workTitle, workId);
     });
   };
 
   var setupEpisodeRecordEvent = function(target) {
-    var workContents;
-    var id;
-
-    var clearRecord = function() {
-      $('[name="record-rating"][value=""]').click();
-      $('#record-comment').val('');
-    };
-
     target.click(function() {
-      workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
-      var dataId = workContents.filter('.episode-body').data('id');
-
-      if (id != dataId) {
-        clearRecord();
-        id = dataId;
-      }
-
+      var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
       var workTitle = workContents.find('.work-link').text();
       var episodeNumber = workContents.find('.episode-number').text();
       var episodeTitle = workContents.find('.episode-title').text();
+      var episodeId = workContents.filter('.episode-body').data('id');
 
-      $('#record-work-title').text(workTitle);
-      $('#record-episode-number').text(episodeNumber);
-      $('#record-episode-title').text(episodeTitle);
-      loadChecked($('#record-twitter'), twitterCache);
-      loadChecked($('#record-facebook'), facebookCache);
-
-      $('#record-modal').modal();
-    });
-
-    $('#record-modal-ok').click(function() {
-      var rating = $('[name="record-rating"]:checked').val();
-      var comment = $('#record-comment').val();
-      var twitter = saveChecked($('#record-twitter'), twitterCache);
-      var facebook = saveChecked($('#record-facebook'), facebookCache);
-
-      $('#record-modal').modal('hide');
-
-      annict.createRecord(
+      dialogContent.createRecordDialog.display(
         function(json) {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
-          clearRecord();
-          headerContent.inform('記録しました。', 'info');
         },
-        id, rating, comment, twitter, facebook
+        workTitle, episodeNumber, episodeTitle, episodeId
       );
     });
   };
@@ -333,8 +274,11 @@ var watchingContent = new function() {
 
       method(
         function(json) {
-          var episode = searchEpisode(json.data.searchEpisodes.nodes[0], episodeKey);
-          updateEpisode(episode, workContents);
+          var nodes = json.data.searchEpisodes.nodes;
+          if (nodes && nodes.length != 0) {
+            var episode = searchEpisode(nodes[0], episodeKey);
+            updateEpisode(episode, workContents);
+          }
         },
         annictId, skip
       );
@@ -344,57 +288,24 @@ var watchingContent = new function() {
   var setupUpdateStatusEvent = function(target, state, name) {
     target.click(function() {
       var workHeading = $(this).closest('.work-heading');
-      var id = workHeading.data('id');
+      var workId = workHeading.data('id');
       var workTitle = workHeading.find('.work-link').text();
 
-      $('#status-modal-title').text(workTitle);
-      $('#status-modal-name').text(name);
-      $('#status-modal-ok').data('id', id).data('state', state).text(name);
-      $('#status-modal').modal();
-    });
-  };
-
-  var setupStatusModalEvent = function() {
-    $('#status-modal-ok').click(function() {
-      var id = $(this).data('id');
-      var state = $(this).data('state');
-
-      $('#status-modal').modal('hide');
-
-      annict.updateStatus(
-        function(json) {
-          removeWatchingWorksJson(id);
-
-          var workHeading = $('#watching-works .work-heading[data-id="' + id + '"]');
-          var works = workHeading.closest('.works');
-          workHeading.next('.episode-body').remove();
-          workHeading.remove();
-
-          if (works.find('.work-heading').length == 0) {
-            var groupBody = works.closest('.group-body');
-            var groupHeading = groupBody.prev('.group-heading');
-            var initial = groupHeading.data('initial');
-
-            groupHeading.remove();
-            groupBody.remove();
-
-            headerContent.toggleInitial(initial, false);
-          }
-
+      dialogContent.updateStatusDialog.display(
+        function(id, state) {
+          removeWork(id);
           searchContent.updateWorkStatus(id, state);
-          headerContent.inform('変更しました。', 'info');
         },
-        id, state
+        state, name, workTitle, workId
       );
     });
   };
 
-  var setupEvent = function(template) {
+  var setupEvent = function() {
 
     setupUpdateStatusEvent(template.find('.work-watched'), 'WATCHED', '見た');
     setupUpdateStatusEvent(template.find('.work-hold'), 'ON_HOLD', '一時中断');
     setupUpdateStatusEvent(template.find('.work-stop'), 'STOP_WATCHING', '視聴中止');
-    setupStatusModalEvent();
 
     setupWorkReviewEvent(template.find('.work-review'));
     setupEpisodeRecordEvent(template.find('.episode-record'));
@@ -419,26 +330,13 @@ var watchingContent = new function() {
     });
   };
 
-  var setupRating = function() {
-    var rating = $('#rating-template > *').clone(false, false);
-
-    $('.rating').append(rating).each(function() {
-      var name = $(this).data('name');
-      $(this).find('input').attr('name', name);
-    });
-  };
-
   this.addWork = function(work) {
     if (addWatchingWorksJson(work)) {
       render();
     }
   };
 
-  this.removeWork = function(workId) {
-    if (removeWatchingWorksJson(workId)) {
-      render();
-    }
-  };
+  this.removeWork = removeWork;
 
   this.getGroups = function() {
     return groups;
@@ -459,8 +357,8 @@ var watchingContent = new function() {
   };
 
   this.build = function() {
-    setupEvent($('#group-template'));
-    setupRating();
+    template = $('#watching-template');
+    setupEvent();
 
     if (watchingWorksJsonCache.get().version != version) {
       updateWatchingWorksJson(function(){

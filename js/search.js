@@ -28,17 +28,19 @@ var searchContent = new function() {
     )
   ).constructor('searchWorks');
 
+  var template = null;
+
   var render = function() {
     var searchWorksJson = searchWorksJsonCache.get();
 
     $('#title').val(searchWorksJson.title);
 
-    var works = $('#works-template .works').clone(false, false);
+    var works = template.find('.works').clone(false, false);
     works.empty();
     $('#result-works').empty().append(works);
 
     searchWorksJson.data.searchWorks.nodes.forEach(function(work) {
-      var workHeading = $('#works-template .work-heading').clone(true, true);
+      var workHeading = template.find('.work-heading').clone(true, true);
       workHeading.removeData().attr('data-id', work.id).attr('data-annict-id', work.annictId);
 
       var href = annict.makeWorkPageUrl(work.annictId);
@@ -110,7 +112,7 @@ var searchContent = new function() {
       clear();
     });
 
-    $('#works-template .work-status').change(function() {
+    template.find('.work-status').change(function() {
       var workStatus = $(this);
       var state = workStatus.val();
       var id = workStatus.closest('.work-heading').data('id');
@@ -141,9 +143,17 @@ var searchContent = new function() {
       $(window).scrollTop(0);
       searchWorks(null, searchWorksJsonCache.get().data.searchWorks.pageInfo.endCursor);
     });
+
+    template.find('.work-review').click(function() {
+      var workHeading = $(this).closest('.work-heading');
+      var workTitle = workHeading.find('.work-link').text();
+      var workId = workHeading.data('id');
+      dialogContent.createReviewDialog.display(workTitle, workId);
+    });
   };
 
   this.build = function() {
+    template = $('#search-template');
     setupEvent();
     render();
   };

@@ -71,13 +71,20 @@ h6 {
 .work-link,
 .episode-link {
   margin-left: 5px;
+  vertical-align: middle;
+}
+.episode-title {
+  margin-left: 3px;
 }
 body a,
 body a:focus, body a:hover {
   color: #3c763d;
 }
 #result-works .work-heading:nth-child(even) {
-    background-color: #fff;
+  background-color: #fff;
+}
+#result-works .work-review {
+  float: none;
 }
 .rating label {
   margin-right: 3px;
