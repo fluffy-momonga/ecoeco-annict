@@ -226,10 +226,8 @@ var annict = new function() {
       return;
     }
 
-    $('#token-modal-ok').unbind('click').bind('click', function() {
-      var token = $('#token').val();
-      if (token) {
-        var storage = $('[name="storage"]:checked').val();
+    dialogContent.inputTokenDialog.display(
+      function(storage, token) {
         postQuery(
           function(json) {
             if (storage == 'session') {
@@ -241,13 +239,8 @@ var annict = new function() {
           },
           query, variables, token
         );
-      } else {
-        headerContent.inform('アクセストークンを入力してください。', 'danger');
       }
-      $('#token-modal').modal('hide');
-    });
-
-    $('#token-modal').modal();
+    );
   };
 
   this.watchingWorks = function(success, episodeAnnictIds) {
