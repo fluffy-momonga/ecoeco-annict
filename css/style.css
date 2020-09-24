@@ -73,9 +73,11 @@ h6 {
   margin-left: 5px;
   vertical-align: middle;
 }
-.episode-title,
 #record-episode-title {
   margin-left: 3px;
+}
+.episode-number {
+  margin-right: 3px;
 }
 body a,
 body a:focus, body a:hover {
