@@ -130,6 +130,8 @@ var watchingContent = new function() {
         }
       }
     });
+
+    headerContent.updateBodyTop();
   };
 
   var updateEpisode = function(episode, workContents) {
@@ -224,6 +226,7 @@ var watchingContent = new function() {
         groupBody.remove();
 
         headerContent.toggleInitial(initial, false);
+        headerContent.updateBodyTop();
       }
     }
   };
