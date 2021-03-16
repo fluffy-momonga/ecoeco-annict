@@ -20,6 +20,11 @@ var headerContent = new function() {
     info.show('fast').animate({opacity: 1}, delay ? delay : 3000).hide('fast');
   };
 
+  this.updateBodyTop = function() {
+    var headerHeight = $('#header').outerHeight();
+    $('body').css('padding-top', headerHeight);
+  }
+
   this.build = function() {
     var initialTemplate = $('#initial-template > *');
     var headerInitial = $('#header-initial');
@@ -46,6 +51,8 @@ var headerContent = new function() {
     $('#info').click(function() {
       $(this).finish();
     });
+
+    $(window).resize(this.updateBodyTop);
   };
 };
 
