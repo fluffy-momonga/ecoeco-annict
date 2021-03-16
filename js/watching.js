@@ -44,7 +44,6 @@ var watchingContent = new function() {
     )
   ).constructor('watchingWorks');
 
-  var groupHeadingFirstTop = 0;
   var template = null;
 
   var createWorkHeading = function(work) {
@@ -347,9 +346,7 @@ var watchingContent = new function() {
 
   this.getGroupTop = function(initial) {
     var watchingWorks = $('#watching-works');
-    if (!groupHeadingFirstTop) {
-      groupHeadingFirstTop = watchingWorks.find('.group-heading:first').offset().top;
-    }
+    var groupHeadingFirstTop = watchingWorks.find('.group-heading:first').offset().top;
     var initialTop = watchingWorks.find('.group-heading[data-initial="' + initial + '"]').offset().top;
     return initialTop - groupHeadingFirstTop;
   };
