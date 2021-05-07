@@ -233,16 +233,19 @@ var watchingContent = new function() {
   var setupWorkReviewEvent = function(target) {
     target.click(function() {
       var workHeading = $(this).closest('.work-heading');
+      var workHref = workHeading.find('.work-link').attr('href');
       var workTitle = workHeading.find('.work-link').text();
       var workId = workHeading.data('id');
-      dialogContent.createReviewDialog.display(workTitle, workId);
+      dialogContent.createReviewDialog.display(workHref, workTitle, workId);
     });
   };
 
   var setupEpisodeRecordEvent = function(target) {
     target.click(function() {
       var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
+      var workHref = workContents.find('.work-link').attr('href');
       var workTitle = workContents.find('.work-link').text();
+      var episodeHref = workContents.find('.episode-link').attr('href');
       var episodeNumber = workContents.find('.episode-number').text();
       var episodeTitle = workContents.find('.episode-title').text();
       var episodeId = workContents.filter('.episode-body').data('id');
@@ -252,7 +255,7 @@ var watchingContent = new function() {
           var episode = json.data.createRecord.record.episode;
           updateEpisode(episode, workContents);
         },
-        workTitle, episodeNumber, episodeTitle, episodeId
+        workHref, workTitle, episodeHref, episodeNumber, episodeTitle, episodeId
       );
     });
   };

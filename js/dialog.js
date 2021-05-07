@@ -92,7 +92,7 @@ var dialogContent = new function() {
           this.episodeId = null;
         }.prototype,
         {
-          display: function(callback, workTitle, episodeNumber, episodeTitle, episodeId) {
+          display: function(callback, workHref, workTitle, episodeHref, episodeNumber, episodeTitle, episodeId) {
             this.callback = callback;
 
             if (episodeId != this.episodeId) {
@@ -100,7 +100,8 @@ var dialogContent = new function() {
               this.episodeId = episodeId;
             }
 
-            $('#record-work-title').text(workTitle);
+            $('#record-work-link').attr('href', workHref).text(workTitle);
+            $('#record-episode-link').attr('href', episodeHref);
             $('#record-episode-number').text(episodeNumber);
             $('#record-episode-title').text(episodeTitle);
             loadChecked($('#record-twitter'), twitterCache);
@@ -139,13 +140,13 @@ var dialogContent = new function() {
           this.workId = null;
         }.prototype,
         {
-          display: function(workTitle, workId) {
+          display: function(workHref, workTitle, workId) {
             if (workId != this.workId) {
               clearReview();
               this.workId = workId;
             }
 
-            $('#review-work-title').text(workTitle);
+            $('#review-work-link').attr('href', workHref).text(workTitle);
             loadChecked($('#review-twitter'), twitterCache);
             loadChecked($('#review-facebook'), facebookCache);
 
