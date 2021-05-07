@@ -294,6 +294,7 @@ var watchingContent = new function() {
     target.click(function() {
       var workHeading = $(this).closest('.work-heading');
       var workId = workHeading.data('id');
+      var workHref = workHeading.find('.work-link').attr('href');
       var workTitle = workHeading.find('.work-link').text();
 
       dialogContent.updateStatusDialog.display(
@@ -301,7 +302,7 @@ var watchingContent = new function() {
           removeWork(id);
           searchContent.updateWorkStatus(id, state);
         },
-        state, name, workTitle, workId
+        state, name, workHref, workTitle, workId
       );
     });
   };
