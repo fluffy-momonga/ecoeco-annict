@@ -187,12 +187,12 @@ var dialogContent = new function() {
           this.state = null;
         }.prototype,
         {
-          display: function(callback, state, name, workTitle, workId) {
+          display: function(callback, state, name, workHref, workTitle, workId) {
             this.callback = callback;
             this.workId = workId;
             this.state = state;
 
-            $('#status-modal-title').text(workTitle);
+            $('#status-work-link').attr('href', workHref).text(workTitle);
             $('#status-modal-name').text(name);
             $('#status-modal-ok').text(name);
 
