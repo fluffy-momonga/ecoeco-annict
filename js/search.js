@@ -146,9 +146,10 @@ var searchContent = new function() {
 
     template.find('.work-review').click(function() {
       var workHeading = $(this).closest('.work-heading');
+      var workHref = workHeading.find('.work-link').attr('href');
       var workTitle = workHeading.find('.work-link').text();
       var workId = workHeading.data('id');
-      dialogContent.createReviewDialog.display(workTitle, workId);
+      dialogContent.createReviewDialog.display(workHref, workTitle, workId);
     });
   };
 
