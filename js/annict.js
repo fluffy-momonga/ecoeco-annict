@@ -1,5 +1,6 @@
 var annict = new function() {
-  var endpoint = 'https://api.annict.com/graphql';
+  var domain = 'annict.com';
+  var endpoint = 'https://api.' + domain + '/graphql';
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
   var tokenCache = new StorageCache('token');
@@ -169,11 +170,11 @@ var annict = new function() {
   ;
 
   var makeWorkPageUrl = function(workAnnictId) {
-    return 'https://annict.jp/works/' + workAnnictId;
+    return 'https://' + domain + '/works/' + workAnnictId;
   };
 
   var makeEpisodePageUrl = function(workAnnictId, episodeAnnictId) {
-    return 'https://annict.jp/works/' + workAnnictId + '/episodes/' + episodeAnnictId;
+    return 'https://' + domain + '/works/' + workAnnictId + '/episodes/' + episodeAnnictId;
   };
 
   var ajaxError = function(xhr) {
