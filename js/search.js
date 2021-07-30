@@ -68,7 +68,6 @@ var searchContent = new function() {
         json.title = title;
 
         searchWorksJsonCache.set(json);
-        searchWorksJsonCache.save();
         render();
 
         if (json.data.searchWorks.nodes.length == 0) {
@@ -80,11 +79,13 @@ var searchContent = new function() {
   };
 
   var updateWorkStatus = function(workId, state) {
-    var works = searchWorksJsonCache.get().data.searchWorks.nodes;
+    var json = searchWorksJsonCache.get();
+    var works = json.data.searchWorks.nodes;
+
     for (var i = 0; i < works.length; i++) {
       if (works[i].id == workId) {
         works[i].viewerStatusState = state;
-        searchWorksJsonCache.save();
+        searchWorksJsonCache.set(json);
         $('#result-works .work-heading[data-id="' + workId + '"] .work-status').val(state);
         break;
       }

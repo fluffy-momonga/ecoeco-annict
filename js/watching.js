@@ -136,12 +136,13 @@ var watchingContent = new function() {
   var updateEpisode = function(episode, workContents) {
 
     var annictId = workContents.filter('.work-heading').data('annict-id');
-    var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
+    var json = watchingWorksJsonCache.get();
+    var works = json.data.viewer.works.nodes;
 
     for (var i = 0; i < works.length; i++) {
       if (works[i].annictId == annictId) {
         works[i].episodes.nodes[0] = episode;
-        watchingWorksJsonCache.save();
+        watchingWorksJsonCache.set(json);
 
         var episodeBody = createEpisodeBody(episode, works[i]);
         workContents.filter('.episode-body').remove();
@@ -173,7 +174,6 @@ var watchingContent = new function() {
         }
 
         watchingWorksJsonCache.set(json);
-        watchingWorksJsonCache.save();
         callback();
       },
       watchingWorksJsonCache.get().episodeAnnictIds
@@ -181,7 +181,9 @@ var watchingContent = new function() {
   };
 
   var addWatchingWorksJson = function(work) {
-    var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
+    var json = watchingWorksJsonCache.get();
+    var works = json.data.viewer.works.nodes;
+
     for (var i = 0; i < works.length; i++) {
       if (works[i].annictId == work.annictId) {
         return false;
@@ -189,16 +191,18 @@ var watchingContent = new function() {
     }
 
     works.push(work);
-    watchingWorksJsonCache.save();
+    watchingWorksJsonCache.set(json);
     return true;
   };
 
   var removeWatchingWorksJson = function(workId) {
-    var works = watchingWorksJsonCache.get().data.viewer.works.nodes;
+    var json = watchingWorksJsonCache.get();
+    var works = json.data.viewer.works.nodes;
+
     for (var i = 0; i < works.length; i++) {
       if (works[i].id == workId) {
         works.splice(i, 1);
-        watchingWorksJsonCache.save();
+        watchingWorksJsonCache.set(json);
         return true;
       }
     }

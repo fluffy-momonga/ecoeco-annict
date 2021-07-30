@@ -51,6 +51,7 @@ var JsonCache = Object.setPrototypeOf(
 
       set: function(json) {
         this.json = json;
+        this.save();
       },
 
       remove: function() {
