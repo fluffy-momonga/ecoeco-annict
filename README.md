@@ -4,7 +4,7 @@
 * Annict の GraphQL API を利用するため Annict のアカウント登録が必要となります。  
 https://annict.com/sign_up  
 * アカウント登録後、こちらを参考に個人用のアクセストークンを生成しておきます。  
-https://developers.annict.jp/graphql-api/personal-access-token/
+https://developers.annict.com/docs/authentication/personal-access-token
 
 ---
 EcoEco Annict  
