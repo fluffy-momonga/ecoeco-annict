@@ -1,5 +1,5 @@
 # EcoEco Annict
-作品情報をブラウザのストレージにキャッシュすることで通信コストとサーバーの負担を抑えつつ、粛々と視聴記録を行うための [Annict](https://annict.com) Web クライアントです。
+作品情報をブラウザのストレージにキャッシュすることで通信コストとサーバーの負担を抑えつつ、粛々とアニメの視聴記録を行うための [Annict](https://annict.com) Web クライアントです。
 
 * Annict の GraphQL API を利用するため Annict のアカウント登録が必要となります。  
 https://annict.com/sign_up  
