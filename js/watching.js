@@ -235,7 +235,7 @@ var watchingContent = new function() {
   };
 
   var setupWorkReviewEvent = function(target) {
-    target.click(function() {
+    target.on('click', function() {
       var workHeading = $(this).closest('.work-heading');
       var workHref = workHeading.find('.work-link').attr('href');
       var workTitle = workHeading.find('.work-link').text();
@@ -245,8 +245,8 @@ var watchingContent = new function() {
   };
 
   var setupEpisodeRecordEvent = function(target) {
-    target.click(function() {
-      var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
+    target.on('click', function() {
+      var workContents = $(this).closest('.episode-body').prev('.work-heading').addBack();
       var workHref = workContents.find('.work-link').attr('href');
       var workTitle = workContents.find('.work-link').text();
       var episodeHref = workContents.find('.episode-link').attr('href');
@@ -277,8 +277,8 @@ var watchingContent = new function() {
   };
 
   var setupEpisodeNextPrevEvent = function(target, method, episodeKey, skip) {
-    target.click(function() {
-      var workContents = $(this).closest('.episode-body').prev('.work-heading').andSelf();
+    target.on('click', function() {
+      var workContents = $(this).closest('.episode-body').prev('.work-heading').addBack();
       var annictId = workContents.filter('.episode-body').data('annict-id');
 
       method(
@@ -295,7 +295,7 @@ var watchingContent = new function() {
   };
 
   var setupUpdateStatusEvent = function(target, state, name) {
-    target.click(function() {
+    target.on('click', function() {
       var workHeading = $(this).closest('.work-heading');
       var workId = workHeading.data('id');
       var workHref = workHeading.find('.work-link').attr('href');
@@ -325,14 +325,14 @@ var watchingContent = new function() {
     setupEpisodeNextPrevEvent(template.find('.episode-next'), annict.nextEpisode, 'nextEpisode', false);
     setupEpisodeNextPrevEvent(template.find('.episode-skip-next'), annict.nextEpisode, 'nextEpisode', true);
 
-    $('#update').click(function() {
+    $('#update').on('click', function() {
       updateWatchingWorksJson(function() {
         render();
         headerContent.inform('更新しました。', 'info');
       });
     });
 
-    $('#clear').click(function() {
+    $('#clear').on('click', function() {
       StorageCache.clear();
       watchingContent.clear();
       searchContent.clear();
