@@ -98,22 +98,22 @@ var searchContent = new function() {
   };
 
   var setupEvent = function() {
-    $('#search-form').submit(function() {
+    $('#search-form').on('submit', function() {
       searchWorks(null, null);
       return false;
     });
 
-    $('#search').click(function() {
-      $(this).blur();
-      $('#search-form').submit();
+    $('#search').on('click', function() {
+      $(this).trigger('blur');
+      $('#search-form').trigger('submit');
     });
 
-    $('#remove').click(function() {
-      $(this).blur();
+    $('#remove').on('click', function() {
+      $(this).trigger('blur');
       clear();
     });
 
-    template.find('.work-status').change(function() {
+    template.find('.work-status').on('change', function() {
       var workStatus = $(this);
       var state = workStatus.val();
       var id = workStatus.closest('.work-heading').data('id');
@@ -133,19 +133,19 @@ var searchContent = new function() {
       );
     });
 
-    $('#pager-prev a').click(function() {
-      $(this).blur();
+    $('#pager-prev a').on('click', function() {
+      $(this).trigger('blur');
       $(window).scrollTop(0);
       searchWorks(searchWorksJsonCache.get().data.searchWorks.pageInfo.startCursor, null);
     });
 
-    $('#pager-next a').click(function() {
-      $(this).blur();
+    $('#pager-next a').on('click', function() {
+      $(this).trigger('blur');
       $(window).scrollTop(0);
       searchWorks(null, searchWorksJsonCache.get().data.searchWorks.pageInfo.endCursor);
     });
 
-    template.find('.work-review').click(function() {
+    template.find('.work-review').on('click', function() {
       var workHeading = $(this).closest('.work-heading');
       var workHref = workHeading.find('.work-link').attr('href');
       var workTitle = workHeading.find('.work-link').text();

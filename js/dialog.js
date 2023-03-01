@@ -15,12 +15,12 @@ var dialogContent = new function() {
   };
 
   var clearReview = function() {
-    $('[name^="review-rating-"][value=""]').click();
+    $('[name^="review-rating-"][value=""]').trigger('click');
     $('#review-body').val('');
   };
 
   var clearRecord = function() {
-    $('[name="record-rating"][value=""]').click();
+    $('[name="record-rating"][value=""]').trigger('click');
     $('#record-comment').val('');
   };
 
@@ -33,7 +33,7 @@ var dialogContent = new function() {
     {
       build: function() {
         this.dialog = $(this.id);
-        this.dialog.find('button.btn-success').click(this.execute.bind(this));
+        this.dialog.find('button.btn-success').on('click', this.execute.bind(this));
       },
 
       display: function() {

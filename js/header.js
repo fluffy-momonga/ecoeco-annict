@@ -37,7 +37,7 @@ var headerContent = new function() {
 
     initials = headerInitial.children();
 
-    initials.click(function() {
+    initials.on('click', function() {
 
       $('#nav-watching').tab('show');
 
@@ -45,14 +45,14 @@ var headerContent = new function() {
       var groupTop = watchingContent.getGroupTop(initial);
 
       $(window).scrollTop(groupTop);
-      $(this).blur();
+      $(this).trigger('blur');
     });
 
-    $('#info').click(function() {
+    $('#info').on('click', function() {
       $(this).finish();
     });
 
-    $(window).resize(this.updateBodyTop);
+    $(window).on('resize', this.updateBodyTop);
   };
 };
 
