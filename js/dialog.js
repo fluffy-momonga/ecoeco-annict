@@ -1,19 +1,5 @@
 var dialogContent = new function() {
 
-  var twitterCache = new StorageCache('twitter');
-  var facebookCache = new StorageCache('facebook');
-
-  var loadChecked = function(target, cache) {
-    var value = cache.get();
-    target.prop('checked', value == 'true');
-  };
-
-  var saveChecked = function(target, cache) {
-    var value = target.prop('checked');
-    cache.set(value);
-    return value;
-  };
-
   var clearReview = function() {
     $('[name^="review-rating-"][value=""]').trigger('click');
     $('#review-body').val('');
@@ -104,8 +90,6 @@ var dialogContent = new function() {
             $('#record-episode-link').attr('href', episodeHref);
             $('#record-episode-number').text(episodeNumber);
             $('#record-episode-title').text(episodeTitle);
-            loadChecked($('#record-twitter'), twitterCache);
-            loadChecked($('#record-facebook'), facebookCache);
 
             this.show();
           },
@@ -113,12 +97,10 @@ var dialogContent = new function() {
           execute: function() {
             var rating = $('[name="record-rating"]:checked').val();
             var comment = $('#record-comment').val();
-            var twitter = saveChecked($('#record-twitter'), twitterCache);
-            var facebook = saveChecked($('#record-facebook'), facebookCache);
 
             this.hide();
 
-            annict.createRecord(this.success.bind(this), this.episodeId, rating, comment, twitter, facebook);
+            annict.createRecord(this.success.bind(this), this.episodeId, rating, comment);
           },
 
           success: function(json) {
@@ -147,8 +129,6 @@ var dialogContent = new function() {
             }
 
             $('#review-work-link').attr('href', workHref).text(workTitle);
-            loadChecked($('#review-twitter'), twitterCache);
-            loadChecked($('#review-facebook'), facebookCache);
 
             this.show();
           },
@@ -160,12 +140,10 @@ var dialogContent = new function() {
             var story = $('[name="review-rating-story"]:checked').val();
             var character = $('[name="review-rating-character"]:checked').val();
             var body = $('#review-body').val();
-            var twitter = saveChecked($('#review-twitter'), twitterCache);
-            var facebook = saveChecked($('#review-facebook'), facebookCache);
 
             this.hide();
 
-            annict.createReview(this.success, this.workId, body, overall, animation, music, story, character, twitter, facebook);
+            annict.createReview(this.success, this.workId, body, overall, animation, music, story, character);
           },
 
           success: function(json) {
