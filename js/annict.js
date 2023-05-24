@@ -114,8 +114,8 @@ var annict = new function() {
   ;
 
   var createRecordQuery
-    = 'mutation($id: ID!, $rating: RatingState, $comment: String, $twitter: Boolean, $facebook: Boolean) { '
-    +   'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment, shareTwitter: $twitter, shareFacebook: $facebook}) { '
+    = 'mutation($id: ID!, $rating: RatingState, $comment: String) { '
+    +   'createRecord(input: {episodeId: $id, ratingState: $rating, comment: $comment}) { '
     +     'record { '
     +       'episode { '
     +          episodeFields
@@ -126,8 +126,8 @@ var annict = new function() {
   ;
 
   var createReviewQuery
-    = 'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState, $twitter: Boolean, $facebook: Boolean) { '
-    +   'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character, shareTwitter: $twitter, shareFacebook: $facebook}) { '
+    = 'mutation($id: ID!, $body: String!, $overall: RatingState, $animation: RatingState, $music: RatingState, $story: RatingState, $character: RatingState) { '
+    +   'createReview(input: {workId: $id, body: $body, ratingOverallState: $overall, ratingAnimationState: $animation, ratingMusicState: $music, ratingStoryState: $story, ratingCharacterState: $character}) { '
     +     'review { '
     +       'work { '
     +         'title '
@@ -268,7 +268,7 @@ var annict = new function() {
     request(success, nextEpisodeQuery, variables);
   };
 
-  this.createReview = function(success, id, body, overall, animation, music, story, character, twitter, facebook) {
+  this.createReview = function(success, id, body, overall, animation, music, story, character) {
 
     var variables = {
       id: id,
@@ -290,17 +290,11 @@ var annict = new function() {
     if (character) {
       variables.character = character;
     }
-    if (twitter) {
-      variables.twitter = twitter;
-    }
-    if (facebook) {
-      variables.facebook = facebook;
-    }
 
     request(success, createReviewQuery, variables);
   };
 
-  this.createRecord = function(success, id, rating, comment, twitter, facebook) {
+  this.createRecord = function(success, id, rating, comment) {
 
     var variables = {
       id: id
@@ -311,12 +305,6 @@ var annict = new function() {
     }
     if (comment) {
       variables.comment = comment;
-    }
-    if (twitter) {
-      variables.twitter = twitter;
-    }
-    if (facebook) {
-      variables.facebook = facebook;
     }
 
     request(success, createRecordQuery, variables);
