@@ -22,7 +22,7 @@ var headerContent = new function() {
 
   this.updateBodyTop = function() {
     var headerHeight = $('#header').outerHeight();
-    $('body').css('padding-top', headerHeight);
+    $('body').css('padding-top', headerHeight + 'px');
   }
 
   this.build = function() {
