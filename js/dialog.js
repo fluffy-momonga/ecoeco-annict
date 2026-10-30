@@ -31,11 +31,11 @@ var dialogContent = new function() {
       },
 
       show: function() {
-        this.dialog.modal();
+        bootstrap.Modal.getOrCreateInstance(this.dialog[0]).show();
       },
 
       hide: function() {
-        this.dialog.modal('hide');
+        bootstrap.Modal.getOrCreateInstance(this.dialog[0]).hide();
       }
     }
   ).constructor;
@@ -197,7 +197,10 @@ var dialogContent = new function() {
 
     $('.rating').append(rating).each(function() {
       var name = $(this).data('name');
-      $(this).find('input').attr('name', name);
+      $(this).find('input').attr('name', name).each(function(index) {
+        var id = name + '-' + index;
+        $(this).attr('id', id).next('label').attr('for', id);
+      });
     });
   };
 

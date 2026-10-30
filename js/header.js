@@ -17,7 +17,7 @@ var headerContent = new function() {
     var info = $('#info');
     var infoBg = info.find('#info-bg');
     var oldBg = infoBg.data('bg');
-    var newBg = 'bg-' + type;
+    var newBg = 'bg-' + type + '-subtle';
 
     clearTimeout(infoTimer);
 
@@ -47,7 +47,7 @@ var headerContent = new function() {
 
     initials.on('click', function() {
 
-      $('#nav-watching').tab('show');
+      bootstrap.Tab.getOrCreateInstance($('#nav-watching')[0]).show();
 
       var initial = $(this).data('initial');
       var groupTop = watchingContent.getGroupTop(initial);

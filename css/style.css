@@ -8,7 +8,27 @@ h6 {
   display: none;
 }
 .btn-default {
-  color: #3c763d;
+  --bs-btn-color: #3c763d;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #ccc;
+  --bs-btn-hover-color: #3c763d;
+  --bs-btn-hover-bg: #e6e6e6;
+  --bs-btn-hover-border-color: #adadad;
+  --bs-btn-focus-shadow-rgb: 60, 118, 61;
+  --bs-btn-active-color: #3c763d;
+  --bs-btn-active-bg: #e6e6e6;
+  --bs-btn-active-border-color: #adadad;
+  --bs-btn-disabled-color: #3c763d;
+  --bs-btn-disabled-bg: #fff;
+  --bs-btn-disabled-border-color: #ccc;
+}
+.btn-xs,
+.btn-group-xs > .btn {
+  --bs-btn-padding-y: 1px;
+  --bs-btn-padding-x: 5px;
+  --bs-btn-font-size: 12px;
+  --bs-btn-line-height: 1.5;
+  --bs-btn-border-radius: 3px;
 }
 .navbar {
   min-height: 40px;
@@ -17,16 +37,11 @@ h6 {
   padding-left: 0px;
   padding-right: 0px;
 }
-.navbar-nav {
-  margin: 0;
+.navbar-nav .nav-link {
+  padding: 10px 15px;
 }
-.nav > li {
-  float: left;
-  display: inline-block;
-}
-.navbar-nav > li > a {
-  padding-top: 10px;
-  padding-bottom: 10px;
+.navbar-nav .nav-link.active {
+  background-color: #e7e7e7;
 }
 #info {
   opacity: 0;
@@ -37,44 +52,41 @@ h6 {
   opacity: 1;
   visibility: visible;
 }
-#header-initial {
-  float: right!important;
-}
 .navbar-btn,
 #header .btn {
   margin-top: 4px;
   margin-bottom: 2px;
   margin-right: 0;
 }
-.group.panel {
+.group.card {
+  margin-bottom: 20px;
   border-color: #449d44;
 }
-.group-heading.panel-heading {
+.group-heading.card-header {
   padding: 5px 15px;
   color: #fff;
   background-color: #449d44;
   border-color: #255625;
 }
-.works.panel.panel-info {
-  margin-bottom: 5px;
-}
-.works.panel {
+.works.card {
   margin-bottom: 10px;
+  border-color: var(--bs-success-border-subtle);
 }
-.work-heading.panel-heading {
+.work-heading.card-header {
   padding: 5px 5px;
-}
-.work-heading > .btn-group {
-  display: inline;
+  color: var(--bs-success-text-emphasis);
+  background-color: var(--bs-success-bg-subtle);
+  border-color: var(--bs-success-border-subtle);
 }
 .work-heading > .btn-group .work-review {
   margin-left: 5px;
 }
-.episode-body.panel-body {
+.episode-body.card-body {
   padding: 5px 15px;
 }
 .episode-record[disabled] {
   cursor: pointer;
+  opacity: var(--bs-btn-disabled-opacity);
 }
 .work-link,
 .episode-link {
