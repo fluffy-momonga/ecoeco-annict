@@ -202,17 +202,24 @@ var annict = new function() {
       data.variables = variables;
     }
 
-    $.ajax({
-      url: endpoint,
-      type: 'POST',
-      contentType: 'application/json',
-      dataType: 'json',
+    fetch(endpoint, {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: 'bearer ' + token
       },
-      data: JSON.stringify(data),
-      success: success,
-      error: ajaxError
+      body: JSON.stringify(data)
+    }).then(function(response) {
+      if (!response.ok) {
+        return response.text().then(function(text) {
+          ajaxError({status: response.status, responseText: text});
+        });
+      }
+      return response.json().then(success, function(e) {
+        ajaxError({status: response.status, responseText: e.message});
+      });
+    }, function(e) {
+      ajaxError({status: 0, responseText: e.message});
     });
   };
 
