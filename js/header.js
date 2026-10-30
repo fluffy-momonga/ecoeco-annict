@@ -1,6 +1,13 @@
 var headerContent = new function() {
 
   var initials = null;
+  var infoTimer = null;
+
+  var hideInfo = function() {
+    clearTimeout(infoTimer);
+    infoTimer = null;
+    $('#info').hide();
+  };
 
   this.toggleInitial = function(initial, show) {
     initials.filter('[data-initial="' + initial + '"]').toggle(show);
@@ -12,12 +19,13 @@ var headerContent = new function() {
     var oldBg = infoBg.data('bg');
     var newBg = 'bg-' + type;
 
-    info.finish();
+    clearTimeout(infoTimer);
 
     infoBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
     info.find('#info-message').text(message);
 
-    info.show('fast').animate({opacity: 1}, delay ? delay : 3000).hide('fast');
+    info.show();
+    infoTimer = setTimeout(hideInfo, delay ? delay : 3000);
   };
 
   this.updateBodyTop = function() {
@@ -48,9 +56,7 @@ var headerContent = new function() {
       $(this).trigger('blur');
     });
 
-    $('#info').on('click', function() {
-      $(this).finish();
-    });
+    $('#info').on('click', hideInfo);
 
     $(window).on('resize', this.updateBodyTop);
   };
