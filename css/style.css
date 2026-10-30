@@ -28,6 +28,15 @@ h6 {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+#info {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s, visibility .2s;
+}
+#info.info-show {
+  opacity: 1;
+  visibility: visible;
+}
 #header-initial {
   float: right!important;
 }

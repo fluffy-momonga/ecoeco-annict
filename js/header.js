@@ -6,7 +6,7 @@ var headerContent = new function() {
   var hideInfo = function() {
     clearTimeout(infoTimer);
     infoTimer = null;
-    $('#info').hide();
+    $('#info').removeClass('info-show');
   };
 
   this.toggleInitial = function(initial, show) {
@@ -24,7 +24,7 @@ var headerContent = new function() {
     infoBg.removeClass(oldBg).addClass(newBg).data('bg', newBg);
     info.find('#info-message').text(message);
 
-    info.show();
+    info.addClass('info-show');
     infoTimer = setTimeout(hideInfo, delay ? delay : 3000);
   };
 
