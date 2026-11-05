@@ -1,8 +1,75 @@
+:root {
+  --bs-body-line-height: 1.42857143;
+  --bs-border-radius: 4px;
+  --bs-border-radius-sm: 3px;
+  --bs-border-radius-lg: 6px;
+  --bs-success: #5cb85c;
+  --bs-success-rgb: 92, 184, 92;
+  --bs-success-text-emphasis: #3c763d;
+  --bs-success-bg-subtle: #dff0d8;
+  --bs-success-border-subtle: #d6e9c6;
+}
+html {
+  font-size: 14px;
+}
 body {
   font-size: small;
 }
+h4, .h4 {
+  font-size: 18px;
+}
+h5, .h5 {
+  font-size: 14px;
+}
+h6, .h6 {
+  font-size: 12px;
+  line-height: 1.0;
+}
+h6.card-title {
+  font-size: 16px;
+}
 h6 {
   display: inline-block;
+}
+p {
+  margin-bottom: 10px;
+}
+.row {
+  --bs-gutter-x: 30px;
+}
+.card {
+  --bs-card-spacer-y: 15px;
+  --bs-card-spacer-x: 15px;
+}
+.modal {
+  --bs-modal-padding: 15px;
+  --bs-modal-header-padding: 15px;
+}
+@media (min-width: 576px) {
+  .modal {
+    --bs-modal-width: 600px;
+  }
+}
+.btn-sm {
+  --bs-btn-padding-y: 5px;
+  --bs-btn-padding-x: 10px;
+  --bs-btn-font-size: 12px;
+  --bs-btn-line-height: 1.5;
+  --bs-btn-border-radius: 3px;
+}
+.input-group-sm > .form-control,
+.input-group-sm > .btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.form-select-sm {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
 }
 .template {
   display: none;
@@ -21,6 +88,34 @@ h6 {
   --bs-btn-disabled-color: #3c763d;
   --bs-btn-disabled-bg: #fff;
   --bs-btn-disabled-border-color: #ccc;
+}
+.btn-success {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #5cb85c;
+  --bs-btn-border-color: #4cae4c;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #449d44;
+  --bs-btn-hover-border-color: #398439;
+  --bs-btn-focus-shadow-rgb: 92, 184, 92;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #449d44;
+  --bs-btn-active-border-color: #398439;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #5cb85c;
+  --bs-btn-disabled-border-color: #4cae4c;
+}
+.btn-outline-success {
+  --bs-btn-color: #5cb85c;
+  --bs-btn-border-color: #5cb85c;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #5cb85c;
+  --bs-btn-hover-border-color: #4cae4c;
+  --bs-btn-focus-shadow-rgb: 92, 184, 92;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #449d44;
+  --bs-btn-active-border-color: #398439;
+  --bs-btn-disabled-color: #5cb85c;
+  --bs-btn-disabled-border-color: #5cb85c;
 }
 .btn-xs,
 .btn-group-xs > .btn {
@@ -73,7 +168,7 @@ h6 {
   border-color: var(--bs-success-border-subtle);
 }
 .work-heading.card-header {
-  padding: 5px 5px;
+  padding: 4px 5px;
   color: var(--bs-success-text-emphasis);
   background-color: var(--bs-success-bg-subtle);
   border-color: var(--bs-success-border-subtle);
