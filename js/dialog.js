@@ -14,11 +14,13 @@ var dialogContent = new function() {
     function(id) {
       this.id = id;
       this.dialog = null;
+      this.modal = null;
       this.callback = null;
     }.prototype,
     {
       build: function() {
         this.dialog = $(this.id);
+        this.modal = bootstrap.Modal.getOrCreateInstance(this.dialog[0]);
         this.dialog.find('button.btn-success').on('click', this.execute.bind(this));
       },
 
@@ -31,11 +33,11 @@ var dialogContent = new function() {
       },
 
       show: function() {
-        bootstrap.Modal.getOrCreateInstance(this.dialog[0]).show();
+        this.modal.show();
       },
 
       hide: function() {
-        bootstrap.Modal.getOrCreateInstance(this.dialog[0]).hide();
+        this.modal.hide();
       }
     }
   ).constructor;
