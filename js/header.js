@@ -36,7 +36,8 @@ var headerContent = new function() {
   this.build = function() {
     var initialTemplate = $('#initial-template > *');
     var headerInitial = $('#header-initial');
-    var navWatching = bootstrap.Tab.getOrCreateInstance('#nav-watching');
+    var navWatchingElement = $('#nav-watching');
+    var navWatching = bootstrap.Tab.getOrCreateInstance(navWatchingElement[0]);
 
     watchingContent.getGroups().forEach(function(group) {
       var initial = initialTemplate.clone(false, false);
@@ -48,7 +49,9 @@ var headerContent = new function() {
 
     initials.on('click', function() {
 
-      navWatching.show();
+      if (!navWatchingElement.hasClass('active')) {
+        navWatching.show();
+      }
 
       var initial = $(this).data('initial');
       var groupTop = watchingContent.getGroupTop(initial);
