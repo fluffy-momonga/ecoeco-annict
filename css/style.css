@@ -8,6 +8,7 @@
   --bs-success-text-emphasis: #3c763d;
   --bs-success-bg-subtle: #dff0d8;
   --bs-success-border-subtle: #d6e9c6;
+  scroll-behavior: auto;
 }
 html {
   font-size: 14px;
@@ -197,6 +198,12 @@ p {
 body a,
 body a:focus, body a:hover {
   color: #3c763d;
+}
+a {
+  text-decoration: none;
+}
+a:where(:hover, :focus) {
+  text-decoration: underline;
 }
 #result-works .work-heading:nth-child(even) {
   background-color: #fff;
