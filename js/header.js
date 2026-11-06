@@ -17,7 +17,7 @@ var headerContent = new function() {
     var info = $('#info');
     var infoBg = info.find('#info-bg');
     var oldBg = infoBg.data('bg');
-    var newBg = 'bg-' + type;
+    var newBg = 'bg-' + type + '-subtle';
 
     clearTimeout(infoTimer);
 
@@ -36,6 +36,8 @@ var headerContent = new function() {
   this.build = function() {
     var initialTemplate = $('#initial-template > *');
     var headerInitial = $('#header-initial');
+    var navWatchingElement = $('#nav-watching');
+    var navWatching = bootstrap.Tab.getOrCreateInstance(navWatchingElement[0]);
 
     watchingContent.getGroups().forEach(function(group) {
       var initial = initialTemplate.clone(false, false);
@@ -47,7 +49,9 @@ var headerContent = new function() {
 
     initials.on('click', function() {
 
-      $('#nav-watching').tab('show');
+      if (!navWatchingElement.hasClass('active')) {
+        navWatching.show();
+      }
 
       var initial = $(this).data('initial');
       var groupTop = watchingContent.getGroupTop(initial);

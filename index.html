@@ -4,29 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EcoEco Annict</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha256-2FMn2Zx6PuH5tdBQDRNwrOo60ts5wWPC9R8jK67b3t4=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css" integrity="sha256-ecmcGh4Ok3+AilgWVyi37QCADwLvXvz80Q3+cUZOZ10=" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.min.css">
   </head>
   <body>
-    <nav id="info" class="navbar navbar-default navbar-fixed-bottom">
-      <div id="info-bg" class="navbar-collapse">
-        <p class="navbar-text">
+    <nav id="info" class="navbar fixed-bottom align-items-stretch p-0">
+      <div id="info-bg" class="container-fluid px-3">
+        <p class="navbar-text mb-0">
           <strong id="info-message"></strong>
         </p>
       </div>
     </nav>
-    <nav id="header" class="navbar navbar-default navbar-fixed-top">
+    <nav id="header" class="navbar fixed-top bg-body-tertiary border-bottom p-0">
       <div class="container-fluid">
-          <ul class="nav navbar-nav">
-            <li class="active"><a id="nav-watching" href="#watching-content" data-toggle="tab">見てる</a></li>
-            <li><a id="nav-search" href="#search-content" data-toggle="tab">検索</a></li>
+          <ul class="nav navbar-nav flex-row">
+            <li class="nav-item"><a id="nav-watching" class="nav-link active" href="#watching-content" data-bs-toggle="tab">見てる</a></li>
+            <li class="nav-item"><a id="nav-search" class="nav-link" href="#search-content" data-bs-toggle="tab">検索</a></li>
           </ul>
-          <span id="header-initial"></span>
+          <span id="header-initial" class="ms-auto"></span>
       </div>
     </nav>
     <div class="tab-content">
       <div class="tab-pane active" id="watching-content">
-        <div id="watching-works" class="group panel panel-primary"></div>
+        <div id="watching-works" class="group card"></div>
         <p>
           <button type="button" id="update" class="btn btn-default btn-sm">見てる作品を取得してキャッシュを更新</button>
           <button type="button" id="clear" class="btn btn-default btn-sm">全てのキャッシュをクリア</button>
@@ -34,27 +35,23 @@
       </div>
       <div class="tab-pane" id="search-content">
         <form id="search-form">
-          <div class="input-group input-group-sm has-success">
-            <span class="input-group-btn">
-              <button type="button" id="search" class="btn btn-default">
-                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-              </button>
-            </span>
-            <input type="text" id="title" class="form-control" placeholder="タイトル">
-            <span class="input-group-btn">
-              <button type="button" id="remove" class="btn btn-default">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              </button>
-            </span>
+          <div class="input-group input-group-sm">
+            <button type="button" id="search" class="btn btn-default">
+              <span class="bi bi-search" aria-hidden="true"></span>
+            </button>
+            <input type="text" id="title" class="form-control border-success" placeholder="タイトル">
+            <button type="button" id="remove" class="btn btn-default">
+              <span class="bi bi-x-lg" aria-hidden="true"></span>
+            </button>
           </div>
         </form>
-        <form id="works-form" class="form-inline">
+        <form id="works-form">
           <div id="result-works"></div>
         </form>
         <nav>
-          <ul class="pager">
-            <li id="pager-prev"><a>前へ</a></li>
-            <li id="pager-next"><a>次へ</a></li>
+          <ul class="pagination justify-content-center mt-3">
+            <li id="pager-prev" class="page-item"><a class="page-link" role="button">前へ</a></li>
+            <li id="pager-next" class="page-item"><a class="page-link" role="button">次へ</a></li>
           </ul>
         </nav>
       </div>
@@ -64,12 +61,12 @@
         <button type="button" class="btn btn-default" data-initial="" style="display: none;"></button>
       </div>
       <div id="watching-template">
-        <div class="group-heading panel-heading" data-initial="">
-          <h6 class="group-title panel-title"></h6>
+        <div class="group-heading card-header" data-initial="">
+          <h6 class="group-title card-title mb-0"></h6>
         </div>
-        <div class="group-body panel-body">
-          <div class="works panel panel-success">
-            <div class="work-heading panel-heading" data-id="" data-annict-id="">
+        <div class="group-body card-body">
+          <div class="works card">
+            <div class="work-heading card-header" data-id="" data-annict-id="">
               <div class="btn-group btn-group-xs">
                 <button type="button" class="work-watched btn btn-success">見た</button>
                 <button type="button" class="work-hold btn btn-success">中断</button>
@@ -78,24 +75,26 @@
               <div class="btn-group btn-group-xs">
                 <button type="button" class="work-review btn btn-success">記録</button>
               </div>
-              <h6 class="work-title panel-title">
+              <h6 class="work-title card-title mb-0">
                 <a class="work-link" target="_blank" href=""></a>
               </h6>
             </div>
-            <div class="episode-body panel-body btn-group btn-group-xs" data-id="" data-annict-id="">
-              <button type="button" class="episode-skip-prev btn btn-default">
-                <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
-              </button>
-              <button type="button" class="episode-prev btn btn-default">
-                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-              </button>
-              <a class="episode-record btn btn-default">記録</a>
-              <button type="button" class="episode-next btn btn-default">
-                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-              </button>
-              <button type="button" class="episode-skip-next btn btn-default">
-                <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
-              </button>
+            <div class="episode-body card-body" data-id="" data-annict-id="">
+              <div class="btn-group btn-group-xs">
+                <button type="button" class="episode-skip-prev btn btn-default">
+                  <span class="bi bi-rewind-fill" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="episode-prev btn btn-default">
+                  <span class="bi bi-caret-left-fill" aria-hidden="true"></span>
+                </button>
+                <a class="episode-record btn btn-default">記録</a>
+                <button type="button" class="episode-next btn btn-default">
+                  <span class="bi bi-caret-right-fill" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="episode-skip-next btn btn-default">
+                  <span class="bi bi-fast-forward-fill" aria-hidden="true"></span>
+                </button>
+              </div>
               <a class="episode-link" target="_blank" href="">
                 <span class="episode-number"></span>
                 <span class="episode-title"></span>
@@ -105,76 +104,66 @@
         </div>
       </div>
       <div id="search-template">
-        <div class="works panel panel-success">
-          <div class="work-heading panel-heading" data-id="" data-annict-id="">
-            <div class="form-group has-success">
-              <select class="work-status form-control input-sm">
-                <option value="NO_STATE">ステータス</option>
-                <option value="WANNA_WATCH">見たい</option>
-                <option value="WATCHING">見てる</option>
-                <option value="WATCHED">見た</option>
-                <option value="ON_HOLD">一時中断</option>
-                <option value="STOP_WATCHING">視聴中止</option>
-              </select>
-            </div>
+        <div class="works card">
+          <div class="work-heading card-header" data-id="" data-annict-id="">
+            <select class="work-status form-select form-select-sm d-inline-block w-auto border-success">
+              <option value="NO_STATE">ステータス</option>
+              <option value="WANNA_WATCH">見たい</option>
+              <option value="WATCHING">見てる</option>
+              <option value="WATCHED">見た</option>
+              <option value="ON_HOLD">一時中断</option>
+              <option value="STOP_WATCHING">視聴中止</option>
+            </select>
             <div class="btn-group btn-group-xs">
               <button type="button" class="work-review btn btn-success">記録</button>
             </div>
-            <h6 class="work-title panel-title">
+            <h6 class="work-title card-title mb-0">
               <a class="work-link" target="_blank" href=""></a>
             </h6>
           </div>
         </div>
       </div>
       <div id="rating-template">
-        <label class="btn btn-success active">
-          <input type="radio" name="" autocomplete="off" value="" checked>未評価
-        </label>
-        <label class="btn btn-success">
-          <input type="radio" name="" autocomplete="off" value="BAD">良くない
-        </label>
-        <label class="btn btn-success">
-          <input type="radio" name="" autocomplete="off" value="AVERAGE">普通
-        </label>
-        <label class="btn btn-success">
-          <input type="radio" name="" autocomplete="off" value="GOOD">良い
-        </label>
-        <label class="btn btn-success">
-          <input type="radio" name="" autocomplete="off" value="GREAT">とても良い
-        </label>
+        <input type="radio" class="btn-check" name="" autocomplete="off" value="" checked>
+        <label class="btn btn-outline-success">未評価</label>
+        <input type="radio" class="btn-check" name="" autocomplete="off" value="BAD">
+        <label class="btn btn-outline-success">良くない</label>
+        <input type="radio" class="btn-check" name="" autocomplete="off" value="AVERAGE">
+        <label class="btn btn-outline-success">普通</label>
+        <input type="radio" class="btn-check" name="" autocomplete="off" value="GOOD">
+        <label class="btn btn-outline-success">良い</label>
+        <input type="radio" class="btn-check" name="" autocomplete="off" value="GREAT">
+        <label class="btn btn-outline-success">とても良い</label>
       </div>
     </div>
     <div class="modal" id="token-modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+          <div class="modal-header flex-wrap">
             <h4 class="modal-title">アクセストークンを入力してください。</h4>
-            <input type="text" class="form-control" id="token" placeholder="">
-            <span class="help-block">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+            <input type="text" class="form-control mt-2" id="token" placeholder="">
+            <span class="form-text w-100">
               ※アクセストークンを生成していない場合は <a href="https://developers.annict.com/docs/authentication/personal-access-token" target="_blank">こちら</a> を参考にしてください。
             </span>
           </div>
           <div class="modal-body">
             <p>アクセストークンをブラウザのストレージに保存しますか？</p>
-            <div class="radio">
-              <label>
-                <input type="radio" name="storage" value="" checked>ブラウザのストレージには保存しません。
-              </label>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="storage-none" name="storage" value="" checked>
+              <label class="form-check-label" for="storage-none">ブラウザのストレージには保存しません。</label>
             </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="storage" value="session">タブやウィンドウを閉じるまでの間、ブラウザのストレージに保存します。
-              </label>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="storage-session" name="storage" value="session">
+              <label class="form-check-label" for="storage-session">タブやウィンドウを閉じるまでの間、ブラウザのストレージに保存します。</label>
             </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="storage" value="local">キャッシュをクリアするまでの間、ブラウザのストレージに保存します。
-              </label>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="storage-local" name="storage" value="local">
+              <label class="form-check-label" for="storage-local">キャッシュをクリアするまでの間、ブラウザのストレージに保存します。</label>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-default" data-bs-dismiss="modal">キャンセル</button>
             <button type="button" class="btn btn-success" id="token-modal-ok">OK</button>
           </div>
         </div>
@@ -183,12 +172,12 @@
     <div class="modal" id="record-modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+          <div class="modal-header flex-wrap">
             <h4 class="modal-title">
               <a id="record-work-link" target="_blank" href=""></a>
             </h4>
-            <h5 class="modal-title">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+            <h5 class="modal-title w-100">
               <a id="record-episode-link" target="_blank" href="">
                 <span id="record-episode-number"></span>
                 <span id="record-episode-title"></span>
@@ -196,15 +185,15 @@
             </h5>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <div class="rating btn-group-xs" data-toggle="buttons" data-name="record-rating"></div>
+            <div class="mb-3">
+              <div class="rating btn-group-xs" data-name="record-rating"></div>
             </div>
-            <div class="form-group has-success">
-              <textarea id="record-comment" class="form-control" rows="5" placeholder="感想 (自由入力)"></textarea>
+            <div>
+              <textarea id="record-comment" class="form-control border-success" rows="5" placeholder="感想 (自由入力)"></textarea>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-default" data-bs-dismiss="modal">キャンセル</button>
             <button type="button" class="btn btn-success" id="record-modal-ok">記録</button>
           </div>
         </div>
@@ -214,46 +203,46 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
             <h4 class="modal-title">
               <a id="review-work-link" target="_blank" href=""></a>
             </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
+            <div class="mb-3">
               <p class="row">
-                <span class="col-xs-6">
+                <span class="col-6">
                   映像<br>
-                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-animation"></span>
+                  <span class="rating btn-group-xs" data-name="review-rating-animation"></span>
                 </span>
-                <span class="col-xs-6">
+                <span class="col-6">
                   音楽<br>
-                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-music"></span>
+                  <span class="rating btn-group-xs" data-name="review-rating-music"></span>
                 </span>
               </p>
               <p class="row">
-                <span class="col-xs-6">
+                <span class="col-6">
                   ストーリー<br>
-                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-story"></span>
+                  <span class="rating btn-group-xs" data-name="review-rating-story"></span>
                 </span>
-                <span class="col-xs-6">
+                <span class="col-6">
                   キャラクター<br>
-                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-character"></span>
+                  <span class="rating btn-group-xs" data-name="review-rating-character"></span>
                 </span>
               </p>
               <p class="row">
-                <span class="col-xs-12">
+                <span class="col-12">
                   全体<br>
-                  <span class="rating btn-group-xs" data-toggle="buttons" data-name="review-rating-overall"></span>
+                  <span class="rating btn-group-xs" data-name="review-rating-overall"></span>
                 </span>
               </p>
             </div>
-            <div class="form-group has-success">
-              <textarea id="review-body" class="form-control" rows="5" placeholder="感想 (自由入力)"></textarea>
+            <div>
+              <textarea id="review-body" class="form-control border-success" rows="5" placeholder="感想 (自由入力)"></textarea>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-default" data-bs-dismiss="modal">キャンセル</button>
             <button type="button" class="btn btn-success" id="review-modal-ok">記録</button>
           </div>
         </div>
@@ -263,10 +252,10 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
             <h4 class="modal-title">
               <a id="status-work-link" target="_blank" href=""></a>
             </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
           </div>
           <div class="modal-body">
             <p>
@@ -274,17 +263,14 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-default" data-bs-dismiss="modal">キャンセル</button>
             <button type="button" class="btn btn-success" id="status-modal-ok"></button>
           </div>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-4.0.0.slim.min.js" integrity="sha256-8DGpv13HIm+5iDNWw1XqxgFB4mj+yOKFNb+tHBZOowc=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/js/transition.js" integrity="sha256-39OKA2oe0vY2JBNpbHFVXBCKoGsv/vaFd3Bd8bGYO8I=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/js/button.js" integrity="sha256-+jG8uucvj4LCsl7AQhkXscOpzWDnwDusp0KfROxpPwQ=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/js/modal.js" integrity="sha256-ECSB9DY9kHC0v5krPB1sTT5Z9B4aU4TrfMVrL6CgPaI=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/js/tab.js" integrity="sha256-1BwfITJzo3St18mk+1d5iBLV00cs2WEjeheCmY576C4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha256-ew8UiV1pJH/YjpOEBInP1HxVvT/SfrCmwSoUzF9JIgc=" crossorigin="anonymous"></script>
     <script src="js/service.min.js"></script>
     <script src="js/annict.min.js"></script>
     <script src="js/dialog.min.js"></script>

@@ -14,11 +14,13 @@ var dialogContent = new function() {
     function(id) {
       this.id = id;
       this.dialog = null;
+      this.modal = null;
       this.callback = null;
     }.prototype,
     {
       build: function() {
         this.dialog = $(this.id);
+        this.modal = bootstrap.Modal.getOrCreateInstance(this.dialog[0]);
         this.dialog.find('button.btn-success').on('click', this.execute.bind(this));
       },
 
@@ -31,11 +33,11 @@ var dialogContent = new function() {
       },
 
       show: function() {
-        this.dialog.modal();
+        this.modal.show();
       },
 
       hide: function() {
-        this.dialog.modal('hide');
+        this.modal.hide();
       }
     }
   ).constructor;
@@ -197,7 +199,10 @@ var dialogContent = new function() {
 
     $('.rating').append(rating).each(function() {
       var name = $(this).data('name');
-      $(this).find('input').attr('name', name);
+      $(this).find('input').attr('name', name).each(function(index) {
+        var id = name + '-' + index;
+        $(this).attr('id', id).next('label').attr('for', id);
+      });
     });
   };
 
