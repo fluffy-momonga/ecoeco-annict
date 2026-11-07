@@ -205,6 +205,9 @@ a {
 a:where(:hover, :focus) {
   text-decoration: underline;
 }
+.form-control::placeholder {
+  color: #999;
+}
 #result-works .work-heading:nth-child(even) {
   background-color: #fff;
 }
