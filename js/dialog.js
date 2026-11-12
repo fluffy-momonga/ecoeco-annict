@@ -63,7 +63,7 @@ var dialogContent = new function() {
             if (token) {
               this.callback(storage, token);
             } else {
-              headerContent.inform('アクセストークンを入力してください。', 'danger');
+              headerContent.inform('アクセストークンを入力してください', 'danger');
             }
           }
         }
@@ -108,7 +108,7 @@ var dialogContent = new function() {
           success: function(json) {
             this.callback(json);
             clearRecord();
-            headerContent.inform('記録しました。', 'info');
+            headerContent.inform('記録しました', 'info');
           }
         }
       ),
@@ -150,7 +150,7 @@ var dialogContent = new function() {
 
           success: function(json) {
             clearReview();
-            headerContent.inform('記録しました。', 'info');
+            headerContent.inform('記録しました', 'info');
           }
         }
       ),
@@ -186,7 +186,7 @@ var dialogContent = new function() {
 
           success: function(json) {
             this.callback(this.workId, this.state);
-            headerContent.inform('変更しました。', 'info');
+            headerContent.inform('変更しました', 'info');
           }
         }
       ),

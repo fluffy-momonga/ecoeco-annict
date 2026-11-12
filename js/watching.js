@@ -328,7 +328,7 @@ var watchingContent = new function() {
     $('#update').on('click', function() {
       updateWatchingWorksJson(function() {
         render();
-        headerContent.inform('更新しました。', 'info');
+        headerContent.inform('更新しました', 'info');
       });
     });
 
@@ -336,7 +336,7 @@ var watchingContent = new function() {
       StorageCache.clear();
       watchingContent.clear();
       searchContent.clear();
-      headerContent.inform('クリアしました。', 'info');
+      headerContent.inform('クリアしました', 'info');
     });
   };
 
