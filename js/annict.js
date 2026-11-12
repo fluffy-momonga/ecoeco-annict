@@ -190,7 +190,7 @@ var annict = new function() {
           message += xhr.responseText;
         }
     }
-    headerContent.inform('Graphql API のリクエストでエラーが発生しました。 (' + xhr.status + message + ')', 'danger', 5000);
+    headerContent.inform('Graphql API のリクエストでエラーが発生しました (' + xhr.status + message + ')', 'danger', 5000);
   };
 
   var postQuery = function(success, query, variables, token) {
@@ -330,7 +330,7 @@ var annict = new function() {
     var titles = title.split(spaceRegExp);
 
     if (titles.length == 0 || !titles[0]) {
-      headerContent.inform('タイトルを入力してください。', 'danger');
+      headerContent.inform('タイトルを入力してください', 'danger');
       return;
     }
 
