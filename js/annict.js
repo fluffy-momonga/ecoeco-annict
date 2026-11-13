@@ -4,6 +4,7 @@ var annict = new function() {
   var searchResults = 20;
   var spaceRegExp = /[\s　]+/g;
   var tokenCache = new StorageCache('token');
+  var retryAtCache = new StorageCache('retryAt');
 
   var workFields
     = 'id '
@@ -193,7 +194,30 @@ var annict = new function() {
     headerContent.inform('Graphql API のリクエストでエラーが発生しました (' + xhr.status + message + ')', 'danger', 5000);
   };
 
+  var getRetryWait = function() {
+    var retryAt = Number(retryAtCache.get());
+    return retryAt ? retryAt - Date.now() : 0;
+  };
+
+  var setRetryAt = function(retryAfter) {
+    var seconds = Number(retryAfter);
+    var retryAt = Date.now() + 60000;
+    if (retryAfter && !isNaN(seconds)) {
+      retryAt = Date.now() + seconds * 1000;
+    } else if (retryAfter && !isNaN(Date.parse(retryAfter))) {
+      retryAt = Date.parse(retryAfter);
+    }
+    retryAtCache.set(retryAt);
+  };
+
   var postQuery = function(success, query, variables, token) {
+    var retryWait = getRetryWait();
+    if (retryWait > 0) {
+      headerContent.inform('リクエスト数が上限を超えました。あと ' + Math.ceil(retryWait / 1000) + ' 秒待ってから再度お試しください', 'danger', 5000);
+      return;
+    }
+    retryAtCache.remove();
+
     var data = {
       query: query.replace(spaceRegExp, ' ')
     };
@@ -211,6 +235,9 @@ var annict = new function() {
       body: JSON.stringify(data)
     }).then(function(response) {
       if (!response.ok) {
+        if (response.status == 429) {
+          setRetryAt(response.headers.get('Retry-After'));
+        }
         return response.text().then(function(text) {
           ajaxError({status: response.status, responseText: text});
         });
